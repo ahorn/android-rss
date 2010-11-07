@@ -14,7 +14,7 @@ public class RSSHandler extends DefaultHandler {
   /**
    * Constant symbol table to ensure efficient lookup of handler states.
    */
-  private static java.util.Map<String, RSSHandlerState> STATES;
+  private static final java.util.Map<String, RSSHandlerState> STATES;
   static {
     STATES = new java.util.HashMap<String, RSSHandlerState>(7);
     STATES.put("channel", RSS_CHANNEL);
