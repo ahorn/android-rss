@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.mcsoxford</groupId>
+  <artifactId>rss</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <name>RSS 2.0 Java Library</name>
+  <url>https://github.com/ahorn/jrsslib/</url>
+  <description>Lightweight Java library to read RSS 2.0 feeds</description>
+  <licenses>
+    <license>
+      <name>GNU General Public License Version 3.0</name>
+      <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+    </license>
+  </licenses>
+  <mailingLists>
+    <mailingList>
+      <name>MCS Computing Club Mailing List</name>
+      <post>mcs-computing-club@googlegroups.com</post>
+      <archive>https://groups.google.com/group/mcs-computing-club</archive>
+    </mailingList>
+  </mailingLists>
+  <developers>
+    <developer>
+      <name>Mr Horn</name>
+      <email>ahorn@mcsoxford.org</email>
+      <organization>Magdalen College School</organization>
+      <organizationUrl>>http://www.mcsoxford.org/</organizationUrl>
+      <roles>
+        <role>Teacher</role>
+      </roles>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:git://github.com/ahorn/jrsslib.git</connection>
+    <developerConnection>scm:git:git@github.com:ahorn/jrsslib.git</developerConnection>
+    <url>http://github.com/ahorn/jrsslib/tree/master</url>
+  </scm>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <encoding>UTF-8</encoding>
+          <source>${jdk.version}</source>
+          <target>${jdk.version}</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <!-- Test Dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8.2</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <properties>
+    <jdk.version>1.6</jdk.version>
+  </properties>
+</project>

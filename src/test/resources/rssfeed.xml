@@ -1,0 +1,22 @@
+<rss version="2.0">  
+  <channel> 
+    <title>Example Channel</title>  
+    <link>http://example.com/</link>  
+    <description>My example channel</description>  
+    <language>en-gb</language>  
+    <lastBuildDate>Sun, 07 Nov 2010 09:33:11 GMT</lastBuildDate>  
+    <copyright>Public Domain</copyright>  
+    <item>
+       <title>News for November</title>
+       <link>http://example.com/2010/11/07</link>
+       <pubDate>Sun, 07 Nov 2010 08:22:14 GMT</pubDate>
+       <description>Other things happened today</description>
+    </item>
+    <item>
+       <title>News for October</title>
+       <link>http://example.com/2010/10/12</link>
+      <description>October days</description>
+      <category>Daily news</category>
+    </item>
+  </channel>
+</rss>
