@@ -1,0 +1,4 @@
+Package:     org.mcsoxford.rss
+License:     GPLv3
+Description: Lightweight Java library to read RSS 2.0 feeds.
+             Currently, it is only a partial implementation of the RSS 2.0 specification.
