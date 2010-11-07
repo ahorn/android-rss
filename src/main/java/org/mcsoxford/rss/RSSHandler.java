@@ -58,6 +58,11 @@ public class RSSHandler extends DefaultHandler {
   public void startElement(String nsURI, String localName, String qname,
       Attributes attributes) {
 
+    // TODO: account for various SAX implementations and configurations
+    if (qname == null || qname.isEmpty()) {
+      qname = localName;
+    }
+
     state = STATES.get(qname);
     if (state == null) {
       // skip unsupported RSS element
