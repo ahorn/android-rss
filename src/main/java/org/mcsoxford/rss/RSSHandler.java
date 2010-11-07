@@ -114,6 +114,13 @@ public class RSSHandler extends DefaultHandler {
     }
   }
 
+  /**
+   * Determines if the SAX parser is ready to receive data inside an XML element
+   * such as &lt;title&gt; or &lt;description&gt;.
+   * 
+   * @return boolean {@code true} if the SAX handler parses data inside an XML
+   *         element, {@code false} otherwise
+   */
   boolean isBuffering() {
     return buffer != null && state != null;
   }
