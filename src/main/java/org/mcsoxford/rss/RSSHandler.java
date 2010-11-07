@@ -16,7 +16,7 @@ public class RSSHandler extends DefaultHandler {
    */
   private static final java.util.Map<String, RSSHandlerState> STATES;
   static {
-    STATES = new java.util.HashMap<String, RSSHandlerState>(7);
+    STATES = new java.util.HashMap<String, RSSHandlerState>(/* prime */7);
     STATES.put("channel", RSS_CHANNEL);
     STATES.put("item", RSS_ITEM);
     STATES.put("title", RSS_TITLE);
