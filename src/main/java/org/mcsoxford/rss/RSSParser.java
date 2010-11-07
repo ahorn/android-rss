@@ -70,17 +70,17 @@ public class RSSParser {
   /**
    * Close input stream and suppress IO faults.
    * 
-   * @return boolean {@code true} if stream has been successfully closed,
-   *         {@code false} otherwise
+   * @return {@code null} if stream has been successfully closed,
+   *         {@link IOException} otherwise
    */
-  private static boolean close(InputStream istream) {
+  private static IOException close(InputStream istream) {
     try {
       istream.close();
     } catch (IOException e) {
-      return false;
+      return e;
     }
 
-    return true;
+    return null;
   }
 
 }
