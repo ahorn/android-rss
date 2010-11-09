@@ -1,7 +1,5 @@
 package org.mcsoxford.rss;
 
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.*;
 import static org.mcsoxford.rss.RSSHandlerState.*;
 
 /**
@@ -9,7 +7,7 @@ import static org.mcsoxford.rss.RSSHandlerState.*;
  * 
  * @author Mr Horn
  */
-public class RSSHandler extends DefaultHandler {
+public class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
 
   /**
    * Constant symbol table to ensure efficient lookup of handler states.
@@ -56,9 +54,9 @@ public class RSSHandler extends DefaultHandler {
 
   @Override
   public void startElement(String nsURI, String localName, String qname,
-      Attributes attributes) {
+      org.xml.sax.Attributes attributes) {
 
-    // TODO: account for SAX implementations 
+    // TODO: account for SAX implementations
     if (qname == null || qname.isEmpty()) {
       qname = localName;
     }
@@ -87,7 +85,7 @@ public class RSSHandler extends DefaultHandler {
           scope.setTitle(bufferString);
           break;
         case RSS_LINK:
-          scope.setLink(java.net.URI.create(bufferString));
+          scope.setLink(URIs.parseURI(bufferString));
           break;
         case RSS_DESCRIPTION:
           scope.setDescription(bufferString);
