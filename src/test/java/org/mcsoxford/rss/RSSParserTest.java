@@ -3,12 +3,13 @@ package org.mcsoxford.rss;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-
-import static junit.framework.Assert.*;
 
 public class RSSParserTest {
 
@@ -45,7 +46,8 @@ public class RSSParserTest {
     assertEquals("News for November", item.getTitle());
     assertEquals(new URI("http://example.com/2010/11/07"), item.getLink());
     assertEquals("Other things happened today", item.getDescription());
-    assertEquals("Sun, 07 Nov 2010 08:22:14 GMT", item.getPubDate());
+    Date expectedDate = new GregorianCalendar(2010, 10, 07, 8, 22, 14).getTime();
+    assertEquals(expectedDate, item.getPubDate());
 
     item = items.next();
     assertEquals("News for October", item.getTitle());

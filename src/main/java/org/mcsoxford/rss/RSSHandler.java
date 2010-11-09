@@ -14,9 +14,9 @@ public class RSSHandler extends DefaultHandler {
   /**
    * Constant symbol table to ensure efficient lookup of handler states.
    */
-  private static final java.util.Map<String, RSSHandlerState> STATES;
+  private static java.util.Map<String, RSSHandlerState> STATES;
   static {
-    STATES = new java.util.HashMap<String, RSSHandlerState>(/* prime */7);
+    STATES = new java.util.HashMap<String, RSSHandlerState>(7);
     STATES.put("channel", RSS_CHANNEL);
     STATES.put("item", RSS_ITEM);
     STATES.put("title", RSS_TITLE);
@@ -58,7 +58,7 @@ public class RSSHandler extends DefaultHandler {
   public void startElement(String nsURI, String localName, String qname,
       Attributes attributes) {
 
-    // TODO: account for various SAX implementations and configurations
+    // TODO: account for SAX implementations 
     if (qname == null || qname.isEmpty()) {
       qname = localName;
     }
@@ -93,7 +93,7 @@ public class RSSHandler extends DefaultHandler {
           scope.setDescription(bufferString);
           break;
         case RSS_PUBDATE:
-          scope.setPubDate(bufferString);
+          scope.setPubDate(Dates.parseRfc822(bufferString));
           break;
         case RSS_CATEGORY:
           item.setCategory(bufferString);

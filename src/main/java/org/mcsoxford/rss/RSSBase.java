@@ -10,7 +10,7 @@ abstract class RSSBase {
   private String title;
   private java.net.URI link;
   private String description;
-  private String pubdate;
+  private java.util.Date pubdate;
 
   public String getTitle() {
     return title;
@@ -24,7 +24,7 @@ abstract class RSSBase {
     return link;
   }
 
-  public String getPubDate() {
+  public java.util.Date getPubDate() {
     return pubdate;
   }
 
@@ -40,7 +40,7 @@ abstract class RSSBase {
     this.description = description;
   }
 
-  void setPubDate(String pubdate) {
+  void setPubDate(java.util.Date pubdate) {
     this.pubdate = pubdate;
   }
 
