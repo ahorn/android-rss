@@ -10,6 +10,7 @@ abstract class RSSBase {
   private String title;
   private java.net.URI link;
   private String description;
+  private String category;
   private java.util.Date pubdate;
 
   public String getTitle() {
@@ -22,6 +23,10 @@ abstract class RSSBase {
 
   public java.net.URI getLink() {
     return link;
+  }
+
+  public String getCategory() {
+    return category;
   }
 
   public java.util.Date getPubDate() {
@@ -38,6 +43,10 @@ abstract class RSSBase {
 
   void setDescription(String description) {
     this.description = description;
+  }
+
+  void setCategory(String category) {
+    this.category = category;
   }
 
   void setPubDate(java.util.Date pubdate) {

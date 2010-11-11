@@ -7,16 +7,6 @@ package org.mcsoxford.rss;
  */
 public class RSSItem extends RSSBase {
 
-  private String category;
-
-  public String getCategory() {
-    return category;
-  }
-
-  void setCategory(String category) {
-    this.category = category;
-  }
-
   /**
    * Returns the title of the RSS item.
    */

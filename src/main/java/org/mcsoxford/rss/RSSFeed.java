@@ -7,7 +7,7 @@ package org.mcsoxford.rss;
  */
 public class RSSFeed extends RSSBase {
 
-  private java.util.List<RSSItem> items;
+  private final java.util.List<RSSItem> items;
 
   RSSFeed() {
     items = new java.util.LinkedList<RSSItem>();
