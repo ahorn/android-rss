@@ -1,5 +1,7 @@
 package org.mcsoxford.rss;
 
+import java.util.Iterator;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -71,4 +73,49 @@ public class RSSHandlerTest {
     assertTrue(handler.isBuffering());
   }
 
+  @Test
+  public void channelTitle() {
+    assertNull(handler.feed().getTitle());
+    handler.startElement(null, null, "title", null);
+    handler.characters(new char[] { 'a', 'b', 'c' }, 0, 3);
+    handler.endElement(null, null, "title");
+    assertEquals("abc", handler.feed().getTitle());
+  }
+
+  @Test
+  public void itemTitle() {
+    assertNull(handler.feed().getTitle());
+    assertFalse(handler.feed().getItems().iterator().hasNext());
+    handler.startElement(null, null, "item", null);
+    handler.startElement(null, null, "title", null);
+    handler.characters(new char[] { 'a', 'b', 'c' }, 0, 3);
+    handler.endElement(null, null, "title");
+    handler.endElement(null, null, "item");
+
+    final Iterator<RSSItem> items = handler.feed().getItems().iterator();
+    assertTrue(items.hasNext());
+    assertNull(handler.feed().getTitle());
+    assertEquals("abc", items.next().getTitle());
+    assertFalse(items.hasNext());
+  }
+
+  @Test
+  public void items() {
+    assertFalse(handler.feed().getItems().iterator().hasNext());
+
+    final char[][] titles = { { 'a', 'b', 'c' }, { '1', '2', '3' } };
+    for (char[] title : titles) {
+      handler.startElement(null, null, "item", null);
+      handler.startElement(null, null, "title", null);
+      handler.characters(title, 0, 3);
+      handler.endElement(null, null, "title");
+      handler.endElement(null, null, "item");
+    }
+
+    final Iterator<RSSItem> items = handler.feed().getItems().iterator();
+    assertTrue(items.hasNext());
+    assertEquals("abc", items.next().getTitle());
+    assertEquals("123", items.next().getTitle());
+    assertFalse(items.hasNext());
+  }
 }
