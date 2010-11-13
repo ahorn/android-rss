@@ -1,11 +1,12 @@
 package org.mcsoxford.rss;
 
 /**
- * Efficient RSS 2.0 parser. Only a single thread must use this SAX handler.
+ * Internal SAX handler to efficiently parse RSS feeds. Only a single thread
+ * must use this SAX handler.
  * 
  * @author Mr Horn
  */
-public class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
+class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
 
   /**
    * Constant for XML element name which identifies RSS items.

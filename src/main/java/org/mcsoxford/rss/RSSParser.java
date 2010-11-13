@@ -12,49 +12,26 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 /**
- * SAX parser for RSS 2.0 feeds.
+ * Thread-safe RSS parser.
  * 
  * @author Mr Horn
  */
 public class RSSParser {
 
-  private final SAXParserFactory factory;
-
   /**
-   * Customize SAX parser.
-   */
-  public RSSParser(SAXParserFactory factory) {
-    this.factory = factory;
-  }
-
-  /**
-   * Parse RSS with default SAX parser.
-   */
-  public RSSParser() {
-    this(SAXParserFactory.newInstance());
-  }
-
-  /**
-   * Parse input stream as an RSS feed.
+   * Parses input stream as RSS feed. The input stream is automatically closed.
    * 
-   * @return RSS 2.0 feed
+   * @param rssfeed RSS 2.0 feed
+   * @return RSS feed in-memory representation
+   * @throws RSSFault if an unrecoverable parse error occurs
    */
   public RSSFeed parse(InputStream rssfeed) {
-    if (rssfeed == null) {
-      throw new IllegalArgumentException("RSS feed must not be null.");
-    }
-
-    final InputSource source = new InputSource(rssfeed);
     try {
+      // TODO: optimize by maintaining factory references
+      final SAXParserFactory factory = SAXParserFactory.newInstance();
       final SAXParser parser = factory.newSAXParser();
-      factory.setNamespaceAware(true);
-      final XMLReader xmlreader = parser.getXMLReader();
-      final RSSHandler handler = new RSSHandler();
 
-      xmlreader.setContentHandler(handler);
-      xmlreader.parse(source);
-
-      return handler.feed();
+      return parse(parser, rssfeed);
     } catch (ParserConfigurationException e) {
       throw new RSSFault(e);
     } catch (SAXException e) {
@@ -62,20 +39,45 @@ public class RSSParser {
     } catch (IOException e) {
       throw new RSSFault(e);
     } finally {
-      close(rssfeed);
+      closeQuietly(rssfeed);
     }
 
   }
 
   /**
-   * Close input stream and suppress IO faults.
+   * Parses input stream as an RSS 2.0 feed. It is the responsibility of the
+   * caller to close the input stream.
+   * 
+   * @return RSS feed
+   * @throws IllegalArgumentException if either argument is {@code null}
+   */
+  static RSSFeed parse(final SAXParser parser, final InputStream rssfeed)
+      throws SAXException, IOException {
+    if (parser == null) {
+      throw new IllegalArgumentException("RSS feed must not be null.");
+    } else if (rssfeed == null) {
+      throw new IllegalArgumentException("RSS feed must not be null.");
+    }
+
+    final InputSource source = new InputSource(rssfeed);
+    final XMLReader xmlreader = parser.getXMLReader();
+    final RSSHandler handler = new RSSHandler();
+
+    xmlreader.setContentHandler(handler);
+    xmlreader.parse(source);
+
+    return handler.feed();
+  }
+
+  /**
+   * Closes stream and suppresses IO faults.
    * 
    * @return {@code null} if stream has been successfully closed,
    *         {@link IOException} otherwise
    */
-  private static IOException close(InputStream istream) {
+  private static IOException closeQuietly(java.io.Closeable stream) {
     try {
-      istream.close();
+      stream.close();
     } catch (IOException e) {
       return e;
     }
