@@ -5,13 +5,4 @@ package org.mcsoxford.rss;
  * 
  * @author Mr Horn
  */
-public class RSSItem extends RSSBase {
-
-  /**
-   * Returns the title of the RSS item.
-   */
-  public String toString() {
-    return getTitle();
-  }
-
-}
+public class RSSItem extends RSSBase {}

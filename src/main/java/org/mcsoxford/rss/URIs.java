@@ -3,11 +3,14 @@ package org.mcsoxford.rss;
 import java.net.URISyntaxException;
 
 /**
- * Internal helper class for URI conversions.
+ * Internal helper class for URIs.
  * 
  * @author Mr Horn
  */
-class URIs {
+final class URIs {
+
+  /* Hide constructor */
+  private URIs() {}
 
   /**
    * Parses string as a URI.

@@ -1,9 +1,12 @@
 package org.mcsoxford.rss;
 
 /**
- * Contingency to which an RSS client should react and recover.
+ * Contingency to which an RSS client should react. Unlike {@link RSSFault}
+ * runtime exceptions, the occurrence of an {@link RSSException} denotes an
+ * alternative execution flow for which RSS clients should account.
  * 
  * @author Mr Horn
+ * @see RSSFault
  */
 public class RSSException extends Exception {
 

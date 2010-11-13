@@ -16,50 +16,47 @@ import org.xml.sax.XMLReader;
  * 
  * @author Mr Horn
  */
-public class RSSParser {
+class RSSParser {
 
   /**
-   * Parses input stream as RSS feed. The input stream is automatically closed.
+   * Parses input stream as RSS feed. It is the responsibility of the caller to
+   * close the RSS feed input stream.
    * 
-   * @param rssfeed RSS 2.0 feed
-   * @return RSS feed in-memory representation
+   * @param feed RSS 2.0 feed input stream
+   * @return in-memory representation of RSS feed
    * @throws RSSFault if an unrecoverable parse error occurs
    */
-  public RSSFeed parse(InputStream rssfeed) {
+  RSSFeed parse(InputStream feed) {
     try {
       // TODO: optimize by maintaining factory references
       final SAXParserFactory factory = SAXParserFactory.newInstance();
       final SAXParser parser = factory.newSAXParser();
 
-      return parse(parser, rssfeed);
+      return parse(parser, feed);
     } catch (ParserConfigurationException e) {
       throw new RSSFault(e);
     } catch (SAXException e) {
       throw new RSSFault(e);
     } catch (IOException e) {
       throw new RSSFault(e);
-    } finally {
-      closeQuietly(rssfeed);
     }
-
   }
 
   /**
-   * Parses input stream as an RSS 2.0 feed. It is the responsibility of the
-   * caller to close the input stream.
+   * Parses input stream as an RSS 2.0 feed.
    * 
-   * @return RSS feed
+   * @return in-memory representation of an RSS feed
    * @throws IllegalArgumentException if either argument is {@code null}
    */
-  static RSSFeed parse(final SAXParser parser, final InputStream rssfeed)
+  private static RSSFeed parse(final SAXParser parser, final InputStream feed)
       throws SAXException, IOException {
     if (parser == null) {
-      throw new IllegalArgumentException("RSS feed must not be null.");
-    } else if (rssfeed == null) {
+      throw new IllegalArgumentException("RSS parser must not be null.");
+    } else if (feed == null) {
       throw new IllegalArgumentException("RSS feed must not be null.");
     }
 
-    final InputSource source = new InputSource(rssfeed);
+    final InputSource source = new InputSource(feed);
     final XMLReader xmlreader = parser.getXMLReader();
     final RSSHandler handler = new RSSHandler();
 
@@ -67,22 +64,6 @@ public class RSSParser {
     xmlreader.parse(source);
 
     return handler.feed();
-  }
-
-  /**
-   * Closes stream and suppresses IO faults.
-   * 
-   * @return {@code null} if stream has been successfully closed,
-   *         {@link IOException} otherwise
-   */
-  private static IOException closeQuietly(java.io.Closeable stream) {
-    try {
-      stream.close();
-    } catch (IOException e) {
-      return e;
-    }
-
-    return null;
   }
 
 }

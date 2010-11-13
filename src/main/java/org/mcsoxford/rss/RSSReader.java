@@ -13,7 +13,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 /**
- * HTTP client to retrieve and parse RSS feeds. Callers must call
+ * HTTP client to retrieve and parse RSS 2.0 feeds. Callers must call
  * {@link RSSReader#close()} to release all resources.
  * 
  * @author Mr Horn
@@ -31,8 +31,8 @@ public class RSSReader implements java.io.Closeable {
   private final RSSParser parser;
 
   /**
-   * Instantiate a thread-safe HTTP connector to retrieve RSS feeds. The
-   * injected {@link HttpClient} implementation must be thread-safe.
+   * Instantiate a thread-safe HTTP client to retrieve RSS feeds. The injected
+   * {@link HttpClient} implementation must be thread-safe.
    * 
    * @param httpclient thread-safe HTTP client implementation
    */
@@ -49,18 +49,19 @@ public class RSSReader implements java.io.Closeable {
   }
 
   /**
-   * Retrieve RSS feed with HTTP GET and parse the XML to construct an in-memory
-   * representation.
+   * Send HTTP GET request and parse the XML response to construct an in-memory
+   * representation of an RSS 2.0 feed.
    * 
-   * @param uri RSS feed URI to load
+   * @param uri RSS 2.0 feed URI
+   * @return in-memory representation of downloaded RSS feed
    * @throws RSSReaderException if RSS feed could not be retrieved because of
-   *           HTTP protocol error
+   *           HTTP error
    * @throws RSSFault if an unrecoverable IO error has occurred
    */
   public RSSFeed load(java.net.URI uri) throws RSSReaderException {
     final HttpGet httpget = new HttpGet(uri);
 
-    final InputStream content;
+    InputStream feed = null;
     try {
       // Send GET request to URI
       final HttpResponse response = httpclient.execute(httpget);
@@ -74,15 +75,16 @@ public class RSSReader implements java.io.Closeable {
 
       // Extract content stream from HTTP response
       HttpEntity entity = response.getEntity();
-      content = entity.getContent();
+      feed = entity.getContent();
+
+      return parser.parse(feed);
     } catch (ClientProtocolException e) {
       throw new RSSFault(e);
     } catch (IOException e) {
       throw new RSSFault(e);
+    } finally {
+      Resources.closeQuietly(feed);
     }
-
-    // Parser closes input stream
-    return parser.parse(content);
   }
 
   /**

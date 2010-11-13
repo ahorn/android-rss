@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
  * 
  * @author Mr Horn
  */
-class Dates {
+final class Dates {
 
   /**
    * @see <a href="http://www.ietf.org/rfc/rfc0822.txt">RFC 822</a>
@@ -16,6 +16,9 @@ class Dates {
   private static final SimpleDateFormat RFC822 = new SimpleDateFormat(
       "EEE, dd MMM yyyy HH:mm:ss Z", java.util.Locale.ENGLISH);
 
+  /* Hide constructor */
+  private Dates() {}
+  
   /**
    * Parses string as an RFC 822 date/time.
    * 

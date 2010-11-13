@@ -142,7 +142,7 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
   /**
    * Instantiate a SAX handler which can parse a subset of RSS 2.0 feeds.
    */
-  public RSSHandler() {
+  RSSHandler() {
     // initialize dispatchers to manage the state of the SAX handler
     setters = new java.util.HashMap<String, Setter>(/* prime */5);
     setters.put("title", SET_TITLE);
@@ -155,7 +155,7 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
   /**
    * Returns the RSS feed after this SAX handler has processed the XML document.
    */
-  public RSSFeed feed() {
+  RSSFeed feed() {
     return feed;
   }
 

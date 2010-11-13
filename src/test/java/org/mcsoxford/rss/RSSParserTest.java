@@ -1,14 +1,11 @@
 package org.mcsoxford.rss;
 
-import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
-
-import javax.xml.parsers.SAXParserFactory;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,19 +27,19 @@ public class RSSParserTest {
   /**
    * Fixture data
    */
-  private InputStream rssfeed;
+  private InputStream stream;
 
   @Before
   public void setup() throws FileNotFoundException {
-    rssfeed = getClass().getClassLoader().getResourceAsStream("rssfeed.xml");
-    assertNotNull(rssfeed);
+    stream = getClass().getClassLoader().getResourceAsStream("rssfeed.xml");
+    assertNotNull(stream);
 
     parser = new RSSParser();
   }
-  
+
   @Test
   public void parse() throws Exception {
-    final RSSFeed feed = parse(rssfeed);
+    final RSSFeed feed = parse(stream);
     assertEquals("Example Channel", feed.getTitle());
     assertEquals(new URI("http://example.com/"), feed.getLink());
     assertEquals("My example channel", feed.getDescription());
@@ -68,16 +65,17 @@ public class RSSParserTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void parseStreamNullArgument() throws Exception {
-    RSSParser.parse(SAXParserFactory.newInstance().newSAXParser(), null);
+    parse(null);
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void parseFactoryNullArgument() throws Exception {
-    RSSParser.parse(null, new ByteArrayInputStream(new byte[3]));
-  }
-
-  private RSSFeed parse(InputStream rssfeed) throws Exception {
-    // Parser closes stream
-    return parser.parse(rssfeed);
+  /**
+   * Helper method to parse an RSS feed and closes the input stream.
+   */
+  private RSSFeed parse(InputStream stream) {
+    try {
+      return parser.parse(stream);
+    } finally {
+      Resources.closeQuietly(stream);
+    }
   }
 }

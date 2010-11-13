@@ -18,7 +18,7 @@ public class RSSReaderException extends Exception {
     super(message);
     this.status = status;
   }
-  
+
   public RSSReaderException(int status, Throwable cause) {
     super(cause);
     this.status = status;
@@ -32,7 +32,7 @@ public class RSSReaderException extends Exception {
   /**
    * Return the HTTP status which caused the error.
    * 
-   * @return HTTP status code
+   * @return HTTP error status code
    */
   public int getStatus() {
     return status;

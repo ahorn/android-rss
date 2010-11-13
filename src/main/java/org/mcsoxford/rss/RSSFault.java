@@ -1,7 +1,7 @@
 package org.mcsoxford.rss;
 
 /**
- * Non-recoverable runtime exception in RSS reader.
+ * Non-recoverable runtime exception.
  * 
  * @author Mr Horn
  */

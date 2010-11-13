@@ -53,4 +53,21 @@ abstract class RSSBase {
     this.pubdate = pubdate;
   }
 
+  /**
+   * Returns the title.
+   */
+  public String toString() {
+    return title;
+  }
+
+  @Override
+  public int hashCode() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    throw new UnsupportedOperationException();
+  }
+
 }
