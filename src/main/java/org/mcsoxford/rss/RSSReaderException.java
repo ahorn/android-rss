@@ -5,7 +5,7 @@ package org.mcsoxford.rss;
  * 
  * @author Mr Horn
  */
-public class RSSReaderException extends Exception {
+public class RSSReaderException extends RSSException {
 
   /**
    * Unsupported serialization
