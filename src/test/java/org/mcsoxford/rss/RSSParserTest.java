@@ -54,11 +54,24 @@ public class RSSParserTest {
     Date expectedDate = new GregorianCalendar(2010, 10, 07, 8, 22, 14).getTime();
     assertEquals(expectedDate, item.getPubDate());
 
+    assertEquals(2, item.getThumbnails().size());
+   
+    MediaThumbnail expectedThumbnail0 = new MediaThumbnail(URIs.parseURI("http://example.com/media/images/12/jpg/_7_2.jpg"), 49, 66);
+    assertEquals(expectedThumbnail0.getUrl(), item.getThumbnails().get(0).getUrl());
+    assertEquals(expectedThumbnail0.getHeight(), item.getThumbnails().get(0).getHeight());
+    assertEquals(expectedThumbnail0.getWidth(), item.getThumbnails().get(0).getWidth());
+    
+    MediaThumbnail expectedThumbnail1 = new MediaThumbnail(URIs.parseURI("http://example.com/media/images/12/jpg/_7_2-1.jpg"), 81, 144);
+    assertEquals(expectedThumbnail1.getUrl(), item.getThumbnails().get(1).getUrl());
+    assertEquals(expectedThumbnail1.getHeight(), item.getThumbnails().get(1).getHeight());
+    assertEquals(expectedThumbnail1.getWidth(), item.getThumbnails().get(1).getWidth());
+
     item = items.next();
     assertEquals("News for October", item.getTitle());
     assertEquals(new URI("http://example.com/2010/10/12"), item.getLink());
     assertEquals("October days", item.getDescription());
     assertEquals("Daily news", item.getCategory());
+    assertEquals(0, item.getThumbnails().size());
 
     assertFalse(items.hasNext());
   }

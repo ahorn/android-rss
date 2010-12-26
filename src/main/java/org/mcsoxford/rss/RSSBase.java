@@ -18,7 +18,7 @@ abstract class RSSBase {
   }
 
   public String getDescription() {
-    return this.description;
+    return description;
   }
 
   public java.net.URI getLink() {
