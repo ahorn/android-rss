@@ -1,14 +1,12 @@
 package org.mcsoxford.rss;
 
-import java.util.List;
-
 /**
  * Data about an RSS item.
  * 
  * @author Mr Horn
  */
 public class RSSItem extends RSSBase {
-  private final List<MediaThumbnail> thumbnails;
+  private final java.util.List<MediaThumbnail> thumbnails;
 
   /* Internal constructor for RSSHandler */
   RSSItem() {
@@ -22,11 +20,11 @@ public class RSSItem extends RSSBase {
   }
 
   /**
-   * Returns a reference to the thumbnails.
+   * Returns an unmodifiable list of thumbnails.
    * The return value is never {@code null}.
    * Images are in order of importance.
    */
-  public List<MediaThumbnail> getThumbnails() {
-    return thumbnails;
+  public java.util.List<MediaThumbnail> getThumbnails() {
+    return java.util.Collections.unmodifiableList(thumbnails);
   }
 }
