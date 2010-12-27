@@ -86,9 +86,16 @@ public class RSSHandlerTest {
     assertFalse(handler.isBuffering());
   }
 
-  @Test(expected=java.lang.IllegalStateException.class)
+  @Test
   public void parseChannelWithThumbnail() {
+    // no exception
     handler.startElement(null, null, "media:thumbnail", null);
+  }
+
+  @Test
+  public void parseThumbnailWithoutUrl() {
+    // no exception
+    handler.startElement(null, null, "media:thumbnail", new org.xml.sax.helpers.AttributesImpl());
   }
 
   @Test

@@ -162,6 +162,7 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
    * Setter for RSS &lt;media:thumbnail&gt; elements inside an &lt;item&gt;
    * element. The thumbnail element has only attributes.
    * Both its height and width are optional.
+   * Invalid media:thumbnail elements are ignored.
    */
   private final Setter SET_MEDIA_THUMBNAIL = new AttributeSetter() {
 
@@ -173,7 +174,8 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
     @Override
     public void set(org.xml.sax.Attributes attributes) {
       if(item == null) {
-        throw new java.lang.IllegalStateException("Thumbnails for channels are invalid.");
+        // ignore invalid media:thumbnail elements which are not inside item elements
+        return;
       }
 
       final int height = MediaAttributes.intValue(attributes, MEDIA_THUMBNAIL_HEIGHT, DEFAULT_DIMENSION);
@@ -181,7 +183,8 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
       final String url = MediaAttributes.stringValue(attributes, MEDIA_THUMBNAIL_URL);
 
       if(url == null) {
-        throw new java.lang.IllegalStateException("Thumbnails must have a URL.");
+        // ignore invalid media:thumbnail elements which have no URL.
+        return;
       }
 
       item.addThumbnail(new MediaThumbnail(URIs.parseURI(url),height, width));
