@@ -74,6 +74,24 @@ public class RSSHandlerTest {
   }
 
   @Test
+  public void isBufferingThumbnail() {
+    // setup
+    isBufferingItem();
+
+    // add required url attribute to media:thumbnail element
+    final org.xml.sax.helpers.AttributesImpl attributes = new org.xml.sax.helpers.AttributesImpl();
+    attributes.addAttribute(null, null, "url", null, "http://example.com/thumbnails/1.jpg");
+
+    handler.startElement(null, null, "media:thumbnail", attributes);
+    assertFalse(handler.isBuffering());
+  }
+
+  @Test(expected=java.lang.IllegalStateException.class)
+  public void parseChannelWithThumbnail() {
+    handler.startElement(null, null, "media:thumbnail", null);
+  }
+
+  @Test
   public void channelTitle() {
     assertNull(handler.feed().getTitle());
     handler.startElement(null, null, "title", null);
