@@ -13,8 +13,11 @@ public class RSSFeed extends RSSBase {
     items = new java.util.LinkedList<RSSItem>();
   }
 
-  public Iterable<RSSItem> getItems() {
-    return items;
+  /**
+   * Returns an unmodifiable list of RSS items.
+   */
+  public java.util.List<RSSItem> getItems() {
+    return java.util.Collections.unmodifiableList(items);
   }
 
   void addItem(RSSItem item) {
