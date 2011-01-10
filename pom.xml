@@ -6,7 +6,7 @@
   <artifactId>rss</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <name>RSS 2.0 Java Library</name>
-  <url>https://github.com/ahorn/jrsslib/</url>
+  <url>https://github.com/ahorn/jrss/</url>
   <description>Lightweight Java library to read RSS 2.0 feeds</description>
   <licenses>
     <license>
@@ -33,9 +33,9 @@
     </developer>
   </developers>
   <scm>
-    <connection>scm:git:git://github.com/ahorn/jrsslib.git</connection>
-    <developerConnection>scm:git:git@github.com:ahorn/jrsslib.git</developerConnection>
-    <url>http://github.com/ahorn/jrsslib/tree/master</url>
+    <connection>scm:git:git://github.com/ahorn/jrss.git</connection>
+    <developerConnection>scm:git:git@github.com:ahorn/jrss.git</developerConnection>
+    <url>http://github.com/ahorn/jrss/tree/master</url>
   </scm>
   <build>
     <plugins>
