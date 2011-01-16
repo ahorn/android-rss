@@ -16,6 +16,8 @@
 
 package org.mcsoxford.rss;
 
+import java.util.ArrayList;
+
 /**
  * Common data about RSS feeds and items.
  * 
@@ -26,14 +28,15 @@ abstract class RSSBase {
   private String title;
   private android.net.Uri link;
   private String description;
-  private java.util.Set<String> categories;
+  private java.util.List<String> categories;
   private java.util.Date pubdate;
 
   /**
-   * Inject a Set ADT implementation.
+   * Specify initial capacity for the List which contains the category names.
    */
-  RSSBase(java.util.Set<String> categories) {
-    this.categories = categories;
+  RSSBase(byte categoryCapacity) {
+    categories = categoryCapacity == 0 ? null : new ArrayList<String>(
+        categoryCapacity);
   }
 
   public String getTitle() {
@@ -48,8 +51,12 @@ abstract class RSSBase {
     return link;
   }
 
-  public java.util.Set<String> getCategories() {
-    return java.util.Collections.unmodifiableSet(categories);
+  public java.util.List<String> getCategories() {
+    if (categories == null) {
+      return java.util.Collections.emptyList();
+    }
+
+    return java.util.Collections.unmodifiableList(categories);
   }
 
   public java.util.Date getPubDate() {
@@ -69,6 +76,10 @@ abstract class RSSBase {
   }
 
   void addCategory(String category) {
+    if (categories == null) {
+      categories = new ArrayList<String>(3);
+    }
+
     this.categories.add(category);
   }
 

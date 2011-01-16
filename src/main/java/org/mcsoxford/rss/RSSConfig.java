@@ -27,7 +27,7 @@ public final class RSSConfig {
 
   /**
    * Average number of RSS item &lt;category&gt; elements which serves as the
-   * initial capacity of the Set implementation.
+   * initial capacity of the List implementation.
    */
   final byte categoryAvg;
 

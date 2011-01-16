@@ -26,7 +26,7 @@ public class RSSFeed extends RSSBase {
   private final java.util.List<RSSItem> items;
 
   RSSFeed() {
-    super(new java.util.HashSet<String>(3));
+    super(/* initial capacity for category names */ (byte) 3);
     items = new java.util.LinkedList<RSSItem>();
   }
 

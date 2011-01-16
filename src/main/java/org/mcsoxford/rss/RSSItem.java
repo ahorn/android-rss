@@ -26,7 +26,7 @@ public class RSSItem extends RSSBase {
 
   /* Internal constructor for RSSHandler */
   RSSItem(byte categoryCapacity, byte thumbnailCapacity) {
-    super(new java.util.HashSet<String>(categoryCapacity));
+    super(categoryCapacity);
     thumbnails = new java.util.ArrayList<MediaThumbnail>(thumbnailCapacity);
   }
 
