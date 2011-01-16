@@ -7,7 +7,7 @@ Installation:
 To add a reference to this library project, navigate to the <sdk>/tools/
 directory and use the following command:
 
-android update lib-project \
+android update project \
   --target <target_ID> \
   --path path/to/your/project \
   --library path/to/rss-android-lib
