@@ -10,6 +10,7 @@ public class RSSFeed extends RSSBase {
   private final java.util.List<RSSItem> items;
 
   RSSFeed() {
+    super(new java.util.HashSet<String>(3));
     items = new java.util.LinkedList<RSSItem>();
   }
 
@@ -25,3 +26,4 @@ public class RSSFeed extends RSSBase {
   }
 
 }
+

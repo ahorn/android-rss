@@ -21,7 +21,7 @@ public class RSSHandlerTest {
 
   @Before
   public void setup() {
-    handler = new RSSHandler();
+    handler = new RSSHandler(new RSSConfig());
   }
 
   @Test

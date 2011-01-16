@@ -10,8 +10,15 @@ abstract class RSSBase {
   private String title;
   private java.net.URI link;
   private String description;
-  private String category;
+  private java.util.Set<String> categories;
   private java.util.Date pubdate;
+
+  /**
+   * Inject a Set ADT implementation.
+   */
+  RSSBase(java.util.Set<String> categories) {
+    this.categories = categories;
+  }
 
   public String getTitle() {
     return title;
@@ -25,8 +32,8 @@ abstract class RSSBase {
     return link;
   }
 
-  public String getCategory() {
-    return category;
+  public java.util.Set<String> getCategories() {
+    return java.util.Collections.unmodifiableSet(categories);
   }
 
   public java.util.Date getPubDate() {
@@ -45,8 +52,8 @@ abstract class RSSBase {
     this.description = description;
   }
 
-  void setCategory(String category) {
-    this.category = category;
+  void addCategory(String category) {
+    this.categories.add(category);
   }
 
   void setPubDate(java.util.Date pubdate) {
@@ -71,3 +78,4 @@ abstract class RSSBase {
   }
 
 }
+

@@ -38,3 +38,4 @@ public class RSSReaderException extends RSSException {
     return status;
   }
 }
+

@@ -70,7 +70,6 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
 
   }
 
-
   /**
    * Setter for RSS &lt;title&gt; elements inside a &lt;channel&gt; or an
    * &lt;item&gt; element. The title of the RSS feed is set only if
@@ -142,29 +141,29 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
   };
 
   /**
-   * Setter for RSS &lt;category&gt; elements inside a &lt;channel&gt; or an
-   * &lt;item&gt; element. The title of the RSS feed is set only if
-   * {@link #item} is {@code null}. Otherwise, the title of the RSS
+   * Setter for one or multiple RSS &lt;category&gt; elements inside a
+   * &lt;channel&gt; or an &lt;item&gt; element. The title of the RSS feed is
+   * set only if {@link #item} is {@code null}. Otherwise, the title of the RSS
    * {@link #item} is set.
    */
-  private final Setter SET_CATEGORY = new ContentSetter() {
+  private final Setter ADD_CATEGORY = new ContentSetter() {
+
     @Override
     public void set(String category) {
       if (item == null) {
-        feed.setCategory(category);
+        feed.addCategory(category);
       } else {
-        item.setCategory(category);
+        item.addCategory(category);
       }
     }
   };
 
   /**
-   * Setter for RSS &lt;media:thumbnail&gt; elements inside an &lt;item&gt;
-   * element. The thumbnail element has only attributes.
-   * Both its height and width are optional.
-   * Invalid media:thumbnail elements are ignored.
+   * Setter for one or multiple RSS &lt;media:thumbnail&gt; elements inside an
+   * &lt;item&gt; element. The thumbnail element has only attributes. Both its
+   * height and width are optional. Invalid elements are ignored.
    */
-  private final Setter SET_MEDIA_THUMBNAIL = new AttributeSetter() {
+  private final Setter ADD_MEDIA_THUMBNAIL = new AttributeSetter() {
 
     private static final String MEDIA_THUMBNAIL_HEIGHT = "height";
     private static final String MEDIA_THUMBNAIL_WIDTH = "width";
@@ -173,8 +172,9 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
 
     @Override
     public void set(org.xml.sax.Attributes attributes) {
-      if(item == null) {
-        // ignore invalid media:thumbnail elements which are not inside item elements
+      if (item == null) {
+        // ignore invalid media:thumbnail elements which are not inside item
+        // elements
         return;
       }
 
@@ -182,29 +182,39 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
       final int width = MediaAttributes.intValue(attributes, MEDIA_THUMBNAIL_WIDTH, DEFAULT_DIMENSION);
       final String url = MediaAttributes.stringValue(attributes, MEDIA_THUMBNAIL_URL);
 
-      if(url == null) {
+      if (url == null) {
         // ignore invalid media:thumbnail elements which have no URL.
         return;
       }
 
-      item.addThumbnail(new MediaThumbnail(URIs.parseURI(url),height, width));
+      item.addThumbnail(new MediaThumbnail(URIs.parseURI(url), height, width));
     }
 
   };
 
+  /**
+   * Use configuration to optimize initial capacities of collections
+   */
+  private final RSSConfig config;
 
   /**
    * Instantiate a SAX handler which can parse a subset of RSS 2.0 feeds.
+   * 
+   * @param categoryAvg average number of RSS item &lt;category&gt; elements
+   * @param thumbnailAvg average number of RSS item &lt;metia:thumbnail&gt;
+   *          elements
    */
-  RSSHandler() {
+  RSSHandler(RSSConfig config) {
+    this.config = config;
+
     // initialize dispatchers to manage the state of the SAX handler
     setters = new java.util.HashMap<String, Setter>(/* prime */7);
     setters.put("title", SET_TITLE);
     setters.put("description", SET_DESCRIPTION);
     setters.put("link", SET_LINK);
-    setters.put("category", SET_CATEGORY);
+    setters.put("category", ADD_CATEGORY);
     setters.put("pubDate", SET_PUBDATE);
-    setters.put("media:thumbnail", SET_MEDIA_THUMBNAIL);
+    setters.put("media:thumbnail", ADD_MEDIA_THUMBNAIL);
   }
 
   /**
@@ -225,7 +235,7 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
     setter = setters.get(qname);
     if (setter == null) {
       if (RSS_ITEM.equals(qname)) {
-        item = new RSSItem();
+        item = new RSSItem(config.categoryAvg, config.thumbnailAvg);
       }
     } else if (setter instanceof AttributeSetter) {
       ((AttributeSetter) setter).set(attributes);
@@ -270,3 +280,4 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
   }
 
 }
+

@@ -9,9 +9,9 @@ public class RSSItem extends RSSBase {
   private final java.util.List<MediaThumbnail> thumbnails;
 
   /* Internal constructor for RSSHandler */
-  RSSItem() {
-    super();
-    thumbnails = new java.util.ArrayList<MediaThumbnail>(2);
+  RSSItem(byte categoryCapacity, byte thumbnailCapacity) {
+    super(new java.util.HashSet<String>(categoryCapacity));
+    thumbnails = new java.util.ArrayList<MediaThumbnail>(thumbnailCapacity);
   }
 
   /* Internal method for RSSHandler */
@@ -20,11 +20,11 @@ public class RSSItem extends RSSBase {
   }
 
   /**
-   * Returns an unmodifiable list of thumbnails.
-   * The return value is never {@code null}.
-   * Images are in order of importance.
+   * Returns an unmodifiable list of thumbnails. The return value is never
+   * {@code null}. Images are in order of importance.
    */
   public java.util.List<MediaThumbnail> getThumbnails() {
     return java.util.Collections.unmodifiableList(thumbnails);
   }
 }
+

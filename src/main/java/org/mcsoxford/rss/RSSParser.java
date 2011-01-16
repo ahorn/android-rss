@@ -18,6 +18,13 @@ import org.xml.sax.XMLReader;
  */
 class RSSParser {
 
+  private final RSSConfig config;
+
+  /* Internal constructor for RSSReader */
+  RSSParser(RSSConfig config) {
+    this.config = config;
+  }
+
   /**
    * Parses input stream as RSS feed. It is the responsibility of the caller to
    * close the RSS feed input stream.
@@ -28,7 +35,8 @@ class RSSParser {
    */
   RSSFeed parse(InputStream feed) {
     try {
-      // TODO: optimize by maintaining factory references
+      // Since SAXParserFactory implementations are not guaranteed to be
+      // thread-safe, a new local object is instantiated.
       final SAXParserFactory factory = SAXParserFactory.newInstance();
       final SAXParser parser = factory.newSAXParser();
 
@@ -48,7 +56,7 @@ class RSSParser {
    * @return in-memory representation of an RSS feed
    * @throws IllegalArgumentException if either argument is {@code null}
    */
-  private static RSSFeed parse(final SAXParser parser, final InputStream feed)
+  private RSSFeed parse(SAXParser parser, InputStream feed)
       throws SAXException, IOException {
     if (parser == null) {
       throw new IllegalArgumentException("RSS parser must not be null.");
@@ -58,7 +66,7 @@ class RSSParser {
 
     final InputSource source = new InputSource(feed);
     final XMLReader xmlreader = parser.getXMLReader();
-    final RSSHandler handler = new RSSHandler();
+    final RSSHandler handler = new RSSHandler(config);
 
     xmlreader.setContentHandler(handler);
     xmlreader.parse(source);
@@ -67,3 +75,4 @@ class RSSParser {
   }
 
 }
+

@@ -19,6 +19,7 @@
       <link>http://example.com/2010/10/12</link>
       <description>October days</description>
       <category>Daily news</category>
+      <category>October news</category>
     </item>
   </channel>
 </rss>

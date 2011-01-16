@@ -34,7 +34,7 @@ public class RSSParserTest {
     stream = getClass().getClassLoader().getResourceAsStream("rssfeed.xml");
     assertNotNull(stream);
 
-    parser = new RSSParser();
+    parser = new RSSParser(new RSSConfig());
   }
 
   @Test
@@ -51,6 +51,7 @@ public class RSSParserTest {
     assertEquals("News for November", item.getTitle());
     assertEquals(new URI("http://example.com/2010/11/07"), item.getLink());
     assertEquals("Other things happened today", item.getDescription());
+    assertTrue(item.getCategories().isEmpty());
     Date expectedDate = new GregorianCalendar(2010, 10, 07, 8, 22, 14).getTime();
     assertEquals(expectedDate, item.getPubDate());
 
@@ -70,7 +71,9 @@ public class RSSParserTest {
     assertEquals("News for October", item.getTitle());
     assertEquals(new URI("http://example.com/2010/10/12"), item.getLink());
     assertEquals("October days", item.getDescription());
-    assertEquals("Daily news", item.getCategory());
+    assertEquals(2, item.getCategories().size());
+    assertTrue(item.getCategories().contains("Daily news"));
+    assertTrue(item.getCategories().contains("October news"));
     assertEquals(0, item.getThumbnails().size());
 
     assertFalse(items.hasNext());
