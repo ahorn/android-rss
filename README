@@ -9,7 +9,7 @@ directory and use the following command:
 
 android update lib-project \
   --target <target_ID> \
-  --path path/to/your/project
+  --path path/to/your/project \
   --library path/to/rss-android-lib
 
 For more details, refer to the Android documentation:
