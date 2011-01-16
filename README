@@ -2,20 +2,38 @@ Package:     org.mcsoxford.rss
 License:     Apache License Version 2.0
 Authors:     A. Horn
 Description: Lightweight Android library to read parts of RSS 2.0 feeds.
-Installation:
 
-To add a reference to this library project, navigate to the <sdk>/tools/
-directory and use the following command:
+== Installation ==
 
-android update project \
-  --target <target_ID> \
-  --path path/to/your/project \
-  --library relative/path/to/rss-android-lib
+Fetch the source code with Git:
 
-For more details, refer to the Android documentation:
-http://developer.android.com/guide/developing/other-ide.html#libraryProject
+  git clone https://ahorn@github.com/ahorn/android-rss.git
 
-API usage:
+To reference this library project from within your Android application,
+navigate to the <sdk>/tools/ directory and use the following command:
+
+  android update project \
+    --target <target_ID> \
+    --path path/to/your/project \
+    --library path/to/android-rss
+
+This command appends to the "default.properties" file in your Android
+project a new "android.library.reference" property. The value of this
+new property should be the relative path to the directory which you
+created when you fetched the Android RSS library source code with Git.
+
+The library is compiled by the Android build framework when you build
+your mobile app which was specified in the --path argument above.
+
+== Troubleshooting ==
+
+Error "android resolve to a path with no default.properties file for project":
+  http://groups.google.com/group/android-developers/browse_thread/thread/37e7728cc2e8f315
+
+Android library project documentation:
+  http://developer.android.com/guide/developing/other-ide.html#libraryProject
+
+== API Usage ==
 
   RSSReader reader = new RSSReader();
   String uri = "http://feeds.bbci.co.uk/news/world/rss.xml";
