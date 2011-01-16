@@ -8,7 +8,7 @@ package org.mcsoxford.rss;
  */
 public final class MediaThumbnail {
 
-  private final java.net.URI url;
+  private final android.net.Uri url;
   private final int height;
   private final int width;
 
@@ -16,7 +16,7 @@ public final class MediaThumbnail {
    * Returns the URL of the thumbnail.
    * The return value is never {@code null}.
    */
-  public java.net.URI getUrl() {
+  public android.net.Uri getUrl() {
     return url;
   }
 
@@ -35,7 +35,7 @@ public final class MediaThumbnail {
   }
 
   /* Internal constructor for RSSHandler */
-  MediaThumbnail(java.net.URI url, int height, int width) {
+  MediaThumbnail(android.net.Uri url, int height, int width) {
     this.url = url;
     this.height = height;
     this.width = width;

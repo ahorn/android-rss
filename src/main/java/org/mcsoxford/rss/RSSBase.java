@@ -8,7 +8,7 @@ package org.mcsoxford.rss;
 abstract class RSSBase {
 
   private String title;
-  private java.net.URI link;
+  private android.net.Uri link;
   private String description;
   private java.util.Set<String> categories;
   private java.util.Date pubdate;
@@ -28,7 +28,7 @@ abstract class RSSBase {
     return description;
   }
 
-  public java.net.URI getLink() {
+  public android.net.Uri getLink() {
     return link;
   }
 
@@ -44,7 +44,7 @@ abstract class RSSBase {
     this.title = title;
   }
 
-  void setLink(java.net.URI link) {
+  void setLink(android.net.Uri link) {
     this.link = link;
   }
 

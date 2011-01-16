@@ -1,7 +1,5 @@
 package org.mcsoxford.rss;
 
-import java.net.URI;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +14,7 @@ import static org.junit.Assert.*;
 public class RSSReaderTest {
 
   /**
-   * BBC News - World RSS feed
+   * URI of the "BBC News - World" RSS feed
    */
   private final static String BBC_NEWS = "http://feeds.bbci.co.uk/news/world/rss.xml";
 
@@ -25,15 +23,9 @@ public class RSSReaderTest {
    */
   private RSSReader reader;
 
-  /**
-   * URI to RSS feed.
-   */
-  private URI uri;
-
   @Before
   public void setup() {
     reader = new RSSReader();
-    uri = URI.create(BBC_NEWS);
   }
 
   @After
@@ -43,12 +35,12 @@ public class RSSReaderTest {
 
   @Test
   public void get() throws RSSReaderException {
-    final RSSFeed feed = reader.load(uri);
+    final RSSFeed feed = reader.load(BBC_NEWS);
 
     assertEquals("BBC News - World", feed.getTitle());
 
     assertEquals(
-        URI.create("http://www.bbc.co.uk/go/rss/int/news/-/news/world/"),
+        android.net.Uri.parse("http://www.bbc.co.uk/go/rss/int/news/-/news/world/"),
         feed.getLink());
 
     assertEquals(
@@ -59,7 +51,7 @@ public class RSSReaderTest {
   @Test
   public void notFound() {
     try {
-      reader.load(URI.create("http://www.example.com/notfound"));
+      reader.load("http://www.example.com/notfound");
     } catch (RSSReaderException e) {
       assertEquals(404, e.getStatus());
     }

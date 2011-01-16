@@ -68,7 +68,7 @@ public class RSSReader implements java.io.Closeable {
    *           HTTP error
    * @throws RSSFault if an unrecoverable IO error has occurred
    */
-  public RSSFeed load(java.net.URI uri) throws RSSReaderException {
+  public RSSFeed load(String uri) throws RSSReaderException {
     final HttpGet httpget = new HttpGet(uri);
 
     InputStream feed = null;
