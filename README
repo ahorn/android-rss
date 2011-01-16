@@ -2,9 +2,20 @@ Package:     org.mcsoxford.rss
 License:     Apache License Version 2.0
 Authors:     A. Horn
 Description: Lightweight Android library to read parts of RSS 2.0 feeds.
+Installation:
 
-Instruction: http://developer.android.com/guide/developing/other-ide.html#libraryProject
-Example:
+To add a reference to this library project, navigate to the <sdk>/tools/
+directory and use the following command:
+
+android update lib-project \
+  --target <target_ID> \
+  --path path/to/your/project
+  --library path/to/rss-android-lib
+
+For more details, refer to the Android documentation:
+http://developer.android.com/guide/developing/other-ide.html#libraryProject
+
+API usage:
 
   RSSReader reader = new RSSReader();
   String uri = "http://feeds.bbci.co.uk/news/world/rss.xml";
