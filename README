@@ -2,3 +2,10 @@ Package:     org.mcsoxford.rss
 License:     Apache License Version 2.0
 Authors:     A. Horn
 Description: Lightweight Android library to read parts of RSS 2.0 feeds.
+
+Instruction: http://developer.android.com/guide/developing/other-ide.html#libraryProject
+Example:
+
+  RSSReader reader = new RSSReader();
+  String uri = "http://feeds.bbci.co.uk/news/world/rss.xml";
+  RSSFeed feed = reader.load(uri);
