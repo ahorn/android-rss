@@ -10,7 +10,7 @@ directory and use the following command:
 android update project \
   --target <target_ID> \
   --path path/to/your/project \
-  --library path/to/rss-android-lib
+  --library relative/path/to/rss-android-lib
 
 For more details, refer to the Android documentation:
 http://developer.android.com/guide/developing/other-ide.html#libraryProject
