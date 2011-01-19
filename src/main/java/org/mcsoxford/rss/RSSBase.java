@@ -94,14 +94,29 @@ abstract class RSSBase {
     return title;
   }
 
+  /**
+   * Returns the hash code of the link.
+   */
   @Override
   public int hashCode() {
-    throw new UnsupportedOperationException();
+    return link.hashCode();
   }
 
+  /**
+   * Compares the links for equality.
+   */
   @Override
   public boolean equals(Object object) {
-    throw new UnsupportedOperationException();
+    if (this == object) {
+      return true;
+    } else if (object instanceof RSSBase) {
+      final RSSBase other = (RSSBase) (object);
+
+      /* other is not null */
+      return link.equals(other.link);
+    } else {
+      return false;
+    }
   }
 
 }
