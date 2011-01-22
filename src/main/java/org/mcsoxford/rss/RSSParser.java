@@ -80,6 +80,8 @@ class RSSParser {
       throw new IllegalArgumentException("RSS feed must not be null.");
     }
 
+    // SAX automatically detects the correct character encoding from the stream
+    // See also http://www.w3.org/TR/REC-xml/#sec-guessing
     final InputSource source = new InputSource(feed);
     final XMLReader xmlreader = parser.getXMLReader();
     final RSSHandler handler = new RSSHandler(config);
