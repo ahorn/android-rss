@@ -51,7 +51,7 @@ public class RSSReaderTest {
   @Test
   public void notFound() {
     try {
-      reader.load("http://www.example.com/notfound");
+      reader.load("http://www.google.co.uk/not/found");
     } catch (RSSReaderException e) {
       assertEquals(404, e.getStatus());
     }
