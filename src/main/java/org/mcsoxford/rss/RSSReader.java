@@ -42,17 +42,18 @@ public class RSSReader implements java.io.Closeable {
   private final HttpClient httpclient;
 
   /**
-   * Thread-safe RSS parser.
+   * Thread-safe RSS parser SPI.
    */
-  private final RSSParser parser;
+  private final RSSParserSPI parser;
 
   /**
    * Instantiate a thread-safe HTTP client to retrieve RSS feeds. The injected
    * {@link HttpClient} implementation must be thread-safe.
    * 
    * @param httpclient thread-safe HTTP client implementation
+   * @param parser thread-safe RSS parser SPI implementation
    */
-  public RSSReader(HttpClient httpclient, RSSParser parser) {
+  public RSSReader(HttpClient httpclient, RSSParserSPI parser) {
     this.httpclient = httpclient;
     this.parser = parser;
   }

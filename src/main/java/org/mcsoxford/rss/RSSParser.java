@@ -28,11 +28,11 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 /**
- * Thread-safe RSS parser.
+ * Internal thread-safe RSS parser SPI implementation.
  * 
  * @author Mr Horn
  */
-class RSSParser {
+class RSSParser implements RSSParserSPI {
 
   private final RSSConfig config;
 
@@ -49,7 +49,8 @@ class RSSParser {
    * @return in-memory representation of RSS feed
    * @throws RSSFault if an unrecoverable parse error occurs
    */
-  RSSFeed parse(InputStream feed) {
+  @Override
+  public RSSFeed parse(InputStream feed) {
     try {
       // Since SAXParserFactory implementations are not guaranteed to be
       // thread-safe, a new local object is instantiated.
