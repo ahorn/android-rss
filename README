@@ -43,3 +43,7 @@ Android library project documentation:
   RSSReader reader = new RSSReader();
   String uri = "http://feeds.bbci.co.uk/news/world/rss.xml";
   RSSFeed feed = reader.load(uri);
+
+== Discussion ==
+
+http://groups.google.com/group/android-developers/browse_thread/thread/b3de98eab436be20
