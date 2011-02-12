@@ -99,6 +99,10 @@ abstract class RSSBase {
    */
   @Override
   public int hashCode() {
+    if (link == null) {
+      return 0;
+    }
+
     return link.hashCode();
   }
 
@@ -110,9 +114,13 @@ abstract class RSSBase {
     if (this == object) {
       return true;
     } else if (object instanceof RSSBase) {
+      /* other is never null */
       final RSSBase other = (RSSBase) (object);
 
-      /* other is not null */
+      if (link == null) {
+        return other.link == null;
+      }
+
       return link.equals(other.link);
     } else {
       return false;

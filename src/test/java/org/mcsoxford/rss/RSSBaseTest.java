@@ -45,6 +45,15 @@ public class RSSBaseTest {
   }
 
   @Test
+  public void equalsOtherNullLink() {
+    RSSBase other = new Foo();
+    assertTrue(base.equals(other));
+
+    other.setLink(android.net.Uri.parse("http://example.com/other"));
+    assertFalse(base.equals(other));
+  }
+
+  @Test
   public void equalsOtherLink() {
     RSSBase other = new Foo();
     other.setLink(android.net.Uri.parse("http://example.com/other"));
