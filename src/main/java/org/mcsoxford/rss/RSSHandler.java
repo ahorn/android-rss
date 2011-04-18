@@ -224,7 +224,7 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
     this.config = config;
 
     // initialize dispatchers to manage the state of the SAX handler
-    setters = new java.util.HashMap<String, Setter>(/* prime */7);
+    setters = new java.util.HashMap<String, Setter>(/* 2^3 */8);
     setters.put("title", SET_TITLE);
     setters.put("description", SET_DESCRIPTION);
     setters.put("link", SET_LINK);
