@@ -55,6 +55,11 @@ class RSSParser implements RSSParserSPI {
       // Since SAXParserFactory implementations are not guaranteed to be
       // thread-safe, a new local object is instantiated.
       final SAXParserFactory factory = SAXParserFactory.newInstance();
+
+      // Support Android 1.6 (see Issue 1)
+      factory.setFeature("http://xml.org/sax/features/namespaces", false);
+      factory.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
+
       final SAXParser parser = factory.newSAXParser();
 
       return parse(parser, feed);
