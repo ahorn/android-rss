@@ -38,6 +38,9 @@ Error "android resolve to a path with no default.properties file for project":
 Android library project documentation:
   http://developer.android.com/guide/developing/other-ide.html#libraryProject
 
+Eclipse reports the error: "Default target help does not exist in this project"
+  https://github.com/ahorn/android-rss/issues/2
+
 == API Usage ==
 
   RSSReader reader = new RSSReader();
