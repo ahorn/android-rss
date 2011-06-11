@@ -130,11 +130,11 @@ public class RSSLoader {
             // perform loading outside of locked region
             feed = reader.load(future.uri);
 
-            // ensure RSSFuture::isDone() returns true
-            future.status.compareAndSet(RSSFuture.LOADING, RSSFuture.LOADED);
-
             // set successfully loaded RSS feed
             future.set(feed, /* error */null);
+
+            // ensure RSSFuture::isDone() returns true
+            future.status.compareAndSet(RSSFuture.LOADING, RSSFuture.LOADED);
           }
         }
       } catch (InterruptedException e) {
