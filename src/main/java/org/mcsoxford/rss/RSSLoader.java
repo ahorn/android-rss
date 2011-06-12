@@ -322,8 +322,6 @@ public class RSSLoader {
         } finally {
           waiting = false;
         }
-
-        return feed;
       }
 
       if (cause != null) {
