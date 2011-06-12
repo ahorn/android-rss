@@ -35,7 +35,35 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <li>{@link #priority(int)}</li>
  * </ul>
  * 
- * Completed RSS feed loads can be retrieved with {@link RSSLoader#take()}.
+ * Completed RSS feed loads can be retrieved with {@link RSSLoader#take()},
+ * {@link RSSLoader#poll()} or {@link RSSLoader#poll(long, TimeUnit)}.
+ * 
+ * <p>
+ * <b>Usage Example</b>
+ * 
+ * Suppose you want to load an array of RSS feed URIs concurrently before
+ * retrieving the results one at a time. You could write this as:
+ * 
+ * <pre>
+ * {@code 
+ *  void fetchRSS(String[] uris) throws InterruptedException {
+ *     RSSLoader loader = RSSLoader.fifo();
+ *     for (String uri : uris) {
+ *       loader.load(uri);
+ *     }
+ *     
+ *     Future&lt;RSSFeed&gt; future;
+ *     RSSFeed feed;
+ *     for (int i = 0; i &lt; uris.length; i++) {
+ *       future = loader.take();
+ *       try {
+ *         feed = future.get();
+ *         use(feed);
+ *       } catch (ExecutionException ignore) {}
+ *     }
+ * }}
+ * 
+ * </p>
  * 
  * @author A. Horn
  */
@@ -47,7 +75,7 @@ public class RSSLoader {
   private final static String DEFAULT_THREAD_NAME = "Asynchronous RSS feed loader";
 
   /**
-   * Arrange incoming load requests on this queue.\
+   * Arrange incoming load requests on this queue.
    */
   private final BlockingQueue<RSSFuture> in;
 
