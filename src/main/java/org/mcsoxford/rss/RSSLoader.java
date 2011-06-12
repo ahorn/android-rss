@@ -117,8 +117,8 @@ public class RSSLoader {
   /**
    * Stop thread after finishing loading pending RSS feed URIs. If this loader
    * has been constructed with {@link #priority()} or {@link #priority(int)},
-   * only RSS feed loads with priority strictly greater than eight are going to
-   * be completed.
+   * only RSS feed loads with priority strictly greater than seven (7) are going
+   * to be completed.
    * <p>
    * Subsequent invocations of {@link #load(String)} and
    * {@link #load(String, int)} return {@code null}.
