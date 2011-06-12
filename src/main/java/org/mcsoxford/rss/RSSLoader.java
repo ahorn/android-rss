@@ -35,6 +35,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <li>{@link #priority(int)}</li>
  * </ul>
  * 
+ * Completed RSS feed loads can be retrieved with {@link RSSLoader#take()}.
+ * 
  * @author A. Horn
  */
 public class RSSLoader {
@@ -45,13 +47,17 @@ public class RSSLoader {
   private final static String DEFAULT_THREAD_NAME = "Asynchronous RSS feed loader";
 
   /**
-   * Thread-safe queue implementation that blocks on
-   * {@link BlockingQueue#take()}.
+   * Arrange incoming load requests on this queue.\
    */
-  private final BlockingQueue<RSSFuture> futures;
+  private final BlockingQueue<RSSFuture> in;
 
   /**
-   * Flag changes are visible after operations on {@link #futures} queue.
+   * Once the an RSS feed has completed loading, place the result on this queue.
+   */
+  private final BlockingQueue<RSSFuture> out;
+
+  /**
+   * Flag changes are visible after operations on {@link #in} queue.
    */
   private boolean stopped;
 
@@ -100,8 +106,11 @@ public class RSSLoader {
    * @see LinkedBlockingQueue
    * @see PriorityBlockingQueue
    */
-  RSSLoader(BlockingQueue<RSSFuture> futures) {
-    this.futures = futures;
+  RSSLoader(BlockingQueue<RSSFuture> in) {
+    this.in = in;
+    this.out = new LinkedBlockingQueue<RSSFuture>();
+
+    // start separate thread for loading of RSS feeds
     new Thread(new Loader(new RSSReader()), DEFAULT_THREAD_NAME).start();
   }
 
@@ -111,7 +120,7 @@ public class RSSLoader {
    */
   public boolean isLoading() {
     // order of conjuncts matters because of happens-before relationship
-    return !futures.isEmpty() && !stopped;
+    return !in.isEmpty() && !stopped;
   }
 
   /**
@@ -126,7 +135,7 @@ public class RSSLoader {
   public void stop() {
     // flag writings happen-before enqueue
     stopped = true;
-    futures.offer(SENTINEL);
+    in.offer(SENTINEL);
   }
 
   /**
@@ -135,16 +144,19 @@ public class RSSLoader {
    * default priority of three (3) is used. Otherwise, RSS feeds are loaded in
    * FIFO order.
    * <p>
-   * Returns {@code null} if the RSS feed URI cannot be loaded due to resource
+   * Returns {@code false} if the RSS feed URI cannot be loaded due to resource
    * constraints or if {@link #stop()} has been previously called.
+   * <p>
+   * Completed RSS feed loads can be retrieved by calling {@link #take()}.
+   * Alternatively, non-blocking polling is possible with {@link #poll()}.
    * 
    * @param uri
    *          RSS feed URI to be loaded
    * 
-   * @return object holding the future outcome of the scheduled load operation
-   *         or {@code null} if the RSS feed URI cannot be loaded
+   * @return {@code true} if RSS feed has been scheduled for loading,
+   *         {@code false} otherwise
    */
-  public Future<RSSFeed> load(String uri) {
+  public boolean load(String uri) {
     return load(uri, RSSFuture.DEFAULT_PRIORITY);
   }
 
@@ -154,35 +166,81 @@ public class RSSLoader {
    * been constructed with {@link #priority()} or {@link #priority(int)}.
    * Otherwise, RSS feeds are loaded in FIFO order.
    * <p>
-   * Returns {@code null} if the RSS feed URI cannot be loaded due to resource
+   * Returns {@code false} if the RSS feed URI cannot be loaded due to resource
    * constraints or if {@link #stop()} has been previously called.
+   * <p>
+   * Completed RSS feed loads can be retrieved by calling {@link #take()}.
+   * Alternatively, non-blocking polling is possible with {@link #poll()}.
    * 
    * @param uri
    *          RSS feed URI to be loaded
    * @param priority
    *          larger integer gives higher priority
    * 
-   * @return object holding the future outcome of the scheduled load operation
-   *         or {@code null} if the RSS feed URI cannot be loaded
+   * @return {@code true} if RSS feed has been scheduled for loading,
+   *         {@code false} otherwise
    */
-  public Future<RSSFeed> load(String uri, int priority) {
+  public boolean load(String uri, int priority) {
     if (uri == null) {
       throw new IllegalArgumentException("RSS feed URI must not be null.");
     }
 
     // optimization (after flag changes have become visible)
     if (stopped) {
-      return null;
+      return false;
     }
 
     // flag readings happen-after enqueue
     final RSSFuture future = new RSSFuture(uri, priority);
-    final boolean ok = futures.offer(future);
-    if (!ok || stopped) {
-      return null;
-    }
+    final boolean ok = in.offer(future);
 
-    return future;
+    return ok && !stopped;
+  }
+
+  /**
+   * Retrieves and removes the next Future representing the result of loading an
+   * RSS feed, waiting if none are yet present.
+   * 
+   * @return the {@link Future} representing the loaded RSS feed
+   * 
+   * @throws InterruptedException
+   *           if interrupted while waiting
+   */
+  public Future<RSSFeed> take() throws InterruptedException {
+    return out.take();
+  }
+
+  /**
+   * Retrieves and removes the next Future representing the result of loading an
+   * RSS feed or {@code null} if none are present.
+   * 
+   * @return the {@link Future} representing the loaded RSS feed, or
+   *         {@code null} if none are present
+   * 
+   * @throws InterruptedException
+   *           if interrupted while waiting
+   */
+  public Future<RSSFeed> poll() {
+    return out.poll();
+  }
+
+  /**
+   * Retrieves and removes the Future representing the result of loading an RSS
+   * feed, waiting if necessary up to the specified wait time if none are yet
+   * present.
+   * 
+   * @param timeout
+   *          how long to wait before giving up, in units of {@code unit}
+   * @param unit
+   *          a {@link TimeUnit} determining how to interpret the
+   *          {@code timeout} parameter
+   * @return the {@link Future} representing the loaded RSS feed, or
+   *         {@code null} if none are present within the specified time interval
+   * @throws InterruptedException
+   *           if interrupted while waiting
+   */
+  public Future<RSSFeed> poll(long timeout, TimeUnit unit) throws InterruptedException {
+    return out.poll(timeout, unit);
   }
 
   /**
@@ -197,15 +255,15 @@ public class RSSLoader {
     }
 
     /**
-     * Keep on loading RSS feeds by dequeuing futures until the sentinel is
-     * encountered.
+     * Keep on loading RSS feeds by dequeuing incoming tasks until the sentinel
+     * is encountered.
      */
     @Override
     public void run() {
       RSSFuture future = null;
       try {
         RSSFeed feed;
-        while ((future = futures.take()) != SENTINEL) {
+        while ((future = in.take()) != SENTINEL) {
           if (future.status.compareAndSet(RSSFuture.READY, RSSFuture.LOADING)) {
             // perform loading outside of locked region
             feed = reader.load(future.uri);
@@ -215,6 +273,9 @@ public class RSSLoader {
 
             // ensure RSSFuture::isDone() returns true
             future.status.compareAndSet(RSSFuture.LOADING, RSSFuture.LOADED);
+
+            // enable caller to identify the next completed RSS feed load
+            out.add(future);
           }
         }
       } catch (InterruptedException e) {
