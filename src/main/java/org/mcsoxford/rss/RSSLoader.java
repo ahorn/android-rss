@@ -316,7 +316,7 @@ public class RSSLoader {
 
             // check timeout
             if (System.currentTimeMillis() - startMillis < timeoutMillis) {
-              break;
+              throw new TimeoutException("RSS feed loading timed out");
             }
           }
         } finally {
@@ -326,9 +326,7 @@ public class RSSLoader {
         return feed;
       }
 
-      if (feed == null) {
-        throw new TimeoutException("RSS feed loading timed out");
-      } else if (cause != null) {
+      if (cause != null) {
         throw new ExecutionException(cause);
       }
 
