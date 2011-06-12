@@ -300,7 +300,7 @@ public class RSSLoader {
     }
 
     @Override
-    public RSSFeed get(long timeout, TimeUnit unit) throws InterruptedException,
+    public synchronized RSSFeed get(long timeout, TimeUnit unit) throws InterruptedException,
         ExecutionException, TimeoutException {
 
       if (feed == null && cause == null) {
