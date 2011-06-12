@@ -307,9 +307,17 @@ public class RSSLoader {
         try {
           waiting = true;
 
+          final long timeoutMillis = unit.toMillis(timeout);
+          final long startMillis = System.currentTimeMillis();
+
           // guard against spurious wakeups
           while (waiting) {
-            wait(unit.toMillis(timeout));
+            wait(timeoutMillis);
+
+            // check timeout
+            if (System.currentTimeMillis() - startMillis < timeoutMillis) {
+              break;
+            }
           }
         } finally {
           waiting = false;
