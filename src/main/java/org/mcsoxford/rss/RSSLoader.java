@@ -144,8 +144,9 @@ public class RSSLoader {
    * default priority of three (3) is used. Otherwise, RSS feeds are loaded in
    * FIFO order.
    * <p>
-   * Returns {@code false} if the RSS feed URI cannot be loaded due to resource
-   * constraints or if {@link #stop()} has been previously called.
+   * Returns {@code null} if the RSS feed URI cannot be scheduled for loading
+   * due to resource constraints or if {@link #stop()} has been previously
+   * called.
    * <p>
    * Completed RSS feed loads can be retrieved by calling {@link #take()}.
    * Alternatively, non-blocking polling is possible with {@link #poll()}.
@@ -153,10 +154,10 @@ public class RSSLoader {
    * @param uri
    *          RSS feed URI to be loaded
    * 
-   * @return {@code true} if RSS feed has been scheduled for loading,
-   *         {@code false} otherwise
+   * @return Future representing the RSS feed scheduled for loading,
+   *         {@code null} if scheduling failed
    */
-  public boolean load(String uri) {
+  public Future<RSSFeed> load(String uri) {
     return load(uri, RSSFuture.DEFAULT_PRIORITY);
   }
 
@@ -166,8 +167,9 @@ public class RSSLoader {
    * been constructed with {@link #priority()} or {@link #priority(int)}.
    * Otherwise, RSS feeds are loaded in FIFO order.
    * <p>
-   * Returns {@code false} if the RSS feed URI cannot be loaded due to resource
-   * constraints or if {@link #stop()} has been previously called.
+   * Returns {@code null} if the RSS feed URI cannot be scheduled for loading
+   * due to resource constraints or if {@link #stop()} has been previously
+   * called.
    * <p>
    * Completed RSS feed loads can be retrieved by calling {@link #take()}.
    * Alternatively, non-blocking polling is possible with {@link #poll()}.
@@ -177,24 +179,28 @@ public class RSSLoader {
    * @param priority
    *          larger integer gives higher priority
    * 
-   * @return {@code true} if RSS feed has been scheduled for loading,
-   *         {@code false} otherwise
+   * @return Future representing the RSS feed scheduled for loading,
+   *         {@code null} if scheduling failed
    */
-  public boolean load(String uri, int priority) {
+  public Future<RSSFeed> load(String uri, int priority) {
     if (uri == null) {
       throw new IllegalArgumentException("RSS feed URI must not be null.");
     }
 
     // optimization (after flag changes have become visible)
     if (stopped) {
-      return false;
+      return null;
     }
 
     // flag readings happen-after enqueue
     final RSSFuture future = new RSSFuture(uri, priority);
     final boolean ok = in.offer(future);
 
-    return ok && !stopped;
+    if (!ok || stopped) {
+      return null;
+    }
+
+    return future;
   }
 
   /**
