@@ -19,12 +19,21 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Asynchronous loader for RSS feeds.
+ * Asynchronous loader for RSS feeds. RSS feeds can be loaded in FIFO order or
+ * based on priority. Objects of this type can be constructed with one of the
+ * provided static methods:
+ * <ul>
+ * <li>{@link #fifo()}</li>
+ * <li>{@link #fifo(int)}</li>
+ * <li>{@link #priority()}</li>
+ * <li>{@link #priority(int)}</li>
+ * </ul>
  * 
  * @author A. Horn
  */
@@ -36,7 +45,8 @@ public class RSSLoader {
   private final static String DEFAULT_THREAD_NAME = "Asynchronous RSS feed loader";
 
   /**
-   * Thread-safe FIFO data structure
+   * Thread-safe queue implementation that blocks on
+   * {@link BlockingQueue#take()}.
    */
   private final BlockingQueue<RSSFuture> futures;
 
@@ -46,13 +56,52 @@ public class RSSLoader {
   private boolean stopped;
 
   /**
-   * Instantiate an object which can load RSS feeds asynchronously.
+   * Create an object which can load RSS feeds asynchronously in FIFO order.
+   * 
+   * @see #fifo(int)
+   */
+  public static RSSLoader fifo() {
+    return new RSSLoader(new LinkedBlockingQueue<RSSFuture>());
+  }
+
+  /**
+   * Create an object which can load RSS feeds asynchronously in FIFO order.
    * 
    * @param capacity
    *          expected number of URIs to be loaded at a given time
    */
-  public RSSLoader(int capacity) {
-    this.futures = new LinkedBlockingQueue<RSSFuture>(capacity);
+  public static RSSLoader fifo(int capacity) {
+    return new RSSLoader(new LinkedBlockingQueue<RSSFuture>(capacity));
+  }
+
+  /**
+   * Create an object which can load RSS feeds asynchronously based on priority.
+   * 
+   * @see #priority(int)
+   */
+  public static RSSLoader priority() {
+    return new RSSLoader(new PriorityBlockingQueue<RSSFuture>());
+  }
+
+  /**
+   * Create an object which can load RSS feeds asynchronously based on priority.
+   * 
+   * @param capacity
+   *          expected number of URIs to be loaded at a given time
+   */
+  public static RSSLoader priority(int capacity) {
+    return new RSSLoader(new PriorityBlockingQueue<RSSFuture>(capacity));
+  }
+
+  /**
+   * Instantiate an object which can load RSS feeds asynchronously. The provided
+   * {@link BlockingQueue} implementation determines the load behaviour.
+   * 
+   * @see LinkedBlockingQueue
+   * @see PriorityBlockingQueue
+   */
+  RSSLoader(BlockingQueue<RSSFuture> futures) {
+    this.futures = futures;
     new Thread(new Loader(new RSSReader()), DEFAULT_THREAD_NAME).start();
   }
 
@@ -66,7 +115,13 @@ public class RSSLoader {
   }
 
   /**
-   * Stop thread after finishing loading pending RSS feed URIs.
+   * Stop thread after finishing loading pending RSS feed URIs. If this loader
+   * has been constructed with {@link #priority()} or {@link #priority(int)},
+   * only RSS feed loads with priority strictly greater than eight are going to
+   * be completed.
+   * <p>
+   * Subsequent invocations of {@link #load(String)} and
+   * {@link #load(String, int)} return {@code null}.
    */
   public void stop() {
     // flag writings happen-before enqueue
@@ -75,9 +130,13 @@ public class RSSLoader {
   }
 
   /**
-   * Loads the specified RSS feed URI asynchronously. Returns {@code null} if
-   * the RSS feed URI cannot be loaded due to resource constraints or if
-   * {@link #stop()} has been previously called.
+   * Loads the specified RSS feed URI asynchronously. If this loader has been
+   * constructed with {@link #priority()} or {@link #priority(int)}, then a
+   * default priority of three (3) is used. Otherwise, RSS feeds are loaded in
+   * FIFO order.
+   * <p>
+   * Returns {@code null} if the RSS feed URI cannot be loaded due to resource
+   * constraints or if {@link #stop()} has been previously called.
    * 
    * @param uri
    *          RSS feed URI to be loaded
@@ -86,6 +145,27 @@ public class RSSLoader {
    *         or {@code null} if the RSS feed URI cannot be loaded
    */
   public Future<RSSFeed> load(String uri) {
+    return load(uri, RSSFuture.DEFAULT_PRIORITY);
+  }
+
+  /**
+   * Loads the specified RSS feed URI asynchronously. For the specified priority
+   * to determine the relative loading order of RSS feeds, this loader must have
+   * been constructed with {@link #priority()} or {@link #priority(int)}.
+   * Otherwise, RSS feeds are loaded in FIFO order.
+   * <p>
+   * Returns {@code null} if the RSS feed URI cannot be loaded due to resource
+   * constraints or if {@link #stop()} has been previously called.
+   * 
+   * @param uri
+   *          RSS feed URI to be loaded
+   * @param priority
+   *          larger integer gives higher priority
+   * 
+   * @return object holding the future outcome of the scheduled load operation
+   *         or {@code null} if the RSS feed URI cannot be loaded
+   */
+  public Future<RSSFeed> load(String uri, int priority) {
     if (uri == null) {
       throw new IllegalArgumentException("RSS feed URI must not be null.");
     }
@@ -96,7 +176,7 @@ public class RSSLoader {
     }
 
     // flag readings happen-after enqueue
-    final RSSFuture future = new RSSFuture(uri);
+    final RSSFuture future = new RSSFuture(uri, priority);
     final boolean ok = futures.offer(future);
     if (!ok || stopped) {
       return null;
@@ -151,19 +231,24 @@ public class RSSLoader {
   /**
    * Internal sentinel to stop the thread that is loading RSS feeds.
    */
-  private final static RSSFuture SENTINEL = new RSSFuture(null);
+  private final static RSSFuture SENTINEL = new RSSFuture(null, /* priority */7);
 
   /**
    * Offer callers control over the asynchronous loading of an RSS feed.
    */
-  static class RSSFuture implements Future<RSSFeed> {
+  static class RSSFuture implements Future<RSSFeed>, Comparable<RSSFuture> {
 
+    static final int DEFAULT_PRIORITY = 3;
     static final int READY = 0;
     static final int LOADING = 1;
     static final int LOADED = 2;
     static final int CANCELLED = 4;
 
+    /** RSS feed URI */
     final String uri;
+
+    /** Larger integer gives higher priority */
+    final int priority;
 
     AtomicInteger status;
 
@@ -171,8 +256,9 @@ public class RSSLoader {
     RSSFeed feed;
     Exception cause;
 
-    RSSFuture(String uri) {
+    RSSFuture(String uri, int priority) {
       this.uri = uri;
+      this.priority = priority;
       status = new AtomicInteger(READY);
     }
 
@@ -251,6 +337,11 @@ public class RSSLoader {
       }
     }
 
+    @Override
+    public int compareTo(RSSFuture other) {
+      // Note: head of PriorityQueue implementation is the least element
+      return other.priority - priority;
+    }
   }
 
 }
