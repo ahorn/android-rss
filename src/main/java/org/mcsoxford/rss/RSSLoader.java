@@ -410,7 +410,7 @@ public class RSSLoader {
             wait(timeoutMillis);
 
             // check timeout
-            if (System.currentTimeMillis() - startMillis < timeoutMillis) {
+            if (System.currentTimeMillis() - startMillis > timeoutMillis) {
               throw new TimeoutException("RSS feed loading timed out");
             }
           }
