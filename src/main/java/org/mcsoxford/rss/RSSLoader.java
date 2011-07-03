@@ -62,6 +62,30 @@ import java.util.concurrent.atomic.AtomicInteger;
  *       } catch (ExecutionException ignore) {}
  *     }
  * }}
+ * </pre>
+ *
+ * Alternatively, you could use the {@link Future#isDone()} method to alleviate
+ * the need for a try-catch block:
+ *
+ * <pre>
+ * {@code 
+ *  void fetchRSS(String[] uris) throws InterruptedException {
+ *     RSSLoader loader = RSSLoader.fifo();
+ *     for (String uri : uris) {
+ *       loader.load(uri);
+ *     }
+ *     
+ *     Future&lt;RSSFeed&gt; future;
+ *     RSSFeed feed;
+ *     for (int i = 0; i &lt; uris.length; i++) {
+ *       future = loader.take();
+ *       if(future.isDone()) {
+ *         feed = future.get();
+ *         use(feed);
+ *       }
+ *     }
+ * }}
+ * </pre>
  * 
  * </p>
  * 
