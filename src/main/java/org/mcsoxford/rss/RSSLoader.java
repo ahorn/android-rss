@@ -339,7 +339,7 @@ public class RSSLoader {
       } catch (InterruptedException e) {
         // Restore the interrupted status
         Thread.currentThread().interrupt();
-      } catch (RSSReaderException e) {
+      } catch (Exception e) {
         // set cause for load() error
         future.set(/* feed */null, e);
       }
