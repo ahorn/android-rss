@@ -64,29 +64,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * }}
  * </pre>
  *
- * Alternatively, you could use the {@link Future#isDone()} method to alleviate
- * the need for a try-catch block:
- *
- * <pre>
- * {@code 
- *  void fetchRSS(String[] uris) throws InterruptedException {
- *     RSSLoader loader = RSSLoader.fifo();
- *     for (String uri : uris) {
- *       loader.load(uri);
- *     }
- *     
- *     Future&lt;RSSFeed&gt; future;
- *     RSSFeed feed;
- *     for (int i = 0; i &lt; uris.length; i++) {
- *       future = loader.take();
- *       if(future.isDone()) {
- *         feed = future.get();
- *         use(feed);
- *       }
- *     }
- * }}
- * </pre>
- * 
  * </p>
  * 
  * @author A. Horn
@@ -318,30 +295,37 @@ public class RSSLoader {
      */
     @Override
     public void run() {
-      RSSFuture future = null;
       try {
+        RSSFuture future = null;
         RSSFeed feed;
         while ((future = in.take()) != SENTINEL) {
+
           if (future.status.compareAndSet(RSSFuture.READY, RSSFuture.LOADING)) {
-            // perform loading outside of locked region
-            feed = reader.load(future.uri);
+            try {
+              // perform loading outside of locked region
+              feed = reader.load(future.uri);
 
-            // set successfully loaded RSS feed
-            future.set(feed, /* error */null);
+              // set successfully loaded RSS feed
+              future.set(feed, /* error */null);
 
-            // ensure RSSFuture::isDone() returns true
-            future.status.compareAndSet(RSSFuture.LOADING, RSSFuture.LOADED);
-
-            // enable caller to identify the next completed RSS feed load
-            out.add(future);
+              // enable caller to consume the loaded RSS feed
+              out.add(future);
+            } catch (RSSException e) {
+              // throw ExecutionException when calling RSSFuture::get()
+              future.set(/* feed */null, e);
+            } catch (RSSFault e) {
+              // throw ExecutionException when calling RSSFuture::get()
+              future.set(/* feed */null, e);
+            } finally {
+              // RSSFuture::isDone() returns true even if an error occurred
+              future.status.compareAndSet(RSSFuture.LOADING, RSSFuture.LOADED);
+            }
           }
+
         }
       } catch (InterruptedException e) {
         // Restore the interrupted status
         Thread.currentThread().interrupt();
-      } catch (Exception e) {
-        // set cause for load() error
-        future.set(/* feed */null, e);
       }
     }
 
