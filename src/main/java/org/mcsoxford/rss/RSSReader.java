@@ -88,7 +88,7 @@ public class RSSReader implements java.io.Closeable {
   public RSSFeed load(String uri) throws RSSReaderException {
     final HttpGet httpget = new HttpGet(uri);
 
-    InputStream feed = null;
+    InputStream feedStream = null;
     try {
       // Send GET request to URI
       final HttpResponse response = httpclient.execute(httpget);
@@ -102,15 +102,21 @@ public class RSSReader implements java.io.Closeable {
 
       // Extract content stream from HTTP response
       HttpEntity entity = response.getEntity();
-      feed = entity.getContent();
+      feedStream = entity.getContent();
 
-      return parser.parse(feed);
+      RSSFeed feed = parser.parse(feedStream);
+
+      if (feed.getLink() == null) {
+        feed.setLink(android.net.Uri.parse(uri));
+      }
+
+      return feed;
     } catch (ClientProtocolException e) {
       throw new RSSFault(e);
     } catch (IOException e) {
       throw new RSSFault(e);
     } finally {
-      Resources.closeQuietly(feed);
+      Resources.closeQuietly(feedStream);
     }
   }
 
