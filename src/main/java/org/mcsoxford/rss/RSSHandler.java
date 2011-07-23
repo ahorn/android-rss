@@ -216,9 +216,7 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
   /**
    * Instantiate a SAX handler which can parse a subset of RSS 2.0 feeds.
    * 
-   * @param categoryAvg average number of RSS item &lt;category&gt; elements
-   * @param thumbnailAvg average number of RSS item &lt;metia:thumbnail&gt;
-   *          elements
+   * @param config configuration for the initial capacities of collections
    */
   RSSHandler(RSSConfig config) {
     this.config = config;
@@ -269,7 +267,7 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
 
       // clear buffer
       buffer = null;
-    } else if (qname.equals(RSS_ITEM)) {
+    } else if (RSS_ITEM.equals(qname)) {
       feed.addItem(item);
 
       // (re)enter <channel> scope
