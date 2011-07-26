@@ -121,7 +121,7 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
   };
   
   /**
-   * Setter for RSS &lt;content&gt; elements inside a &lt;channel&gt; or an
+   * Setter for RSS &lt;content:encoded&gt; elements inside a &lt;channel&gt; or an
    * &lt;item&gt; element. The title of the RSS feed is set only if
    * {@link #item} is {@code null}. Otherwise, the title of the RSS
    * {@link #item} is set.
