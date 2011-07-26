@@ -119,6 +119,23 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
       }
     }
   };
+  
+  /**
+   * Setter for RSS &lt;content&gt; elements inside a &lt;channel&gt; or an
+   * &lt;item&gt; element. The title of the RSS feed is set only if
+   * {@link #item} is {@code null}. Otherwise, the title of the RSS
+   * {@link #item} is set.
+   */
+  private final Setter SET_CONTENT = new ContentSetter() {
+	  @Override
+	  public void set(String content) {
+		  if (item == null) {
+			  feed.setContent(content);
+		  } else {
+			  item.setContent(content);
+		  }
+	  }
+  };
 
   /**
    * Setter for RSS &lt;link&gt; elements inside a &lt;channel&gt; or an
@@ -225,6 +242,7 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
     setters = new java.util.HashMap<String, Setter>(/* 2^3 */8);
     setters.put("title", SET_TITLE);
     setters.put("description", SET_DESCRIPTION);
+    setters.put("content:encoded", SET_CONTENT);
     setters.put("link", SET_LINK);
     setters.put("category", ADD_CATEGORY);
     setters.put("pubDate", SET_PUBDATE);
