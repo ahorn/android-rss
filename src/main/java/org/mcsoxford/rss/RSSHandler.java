@@ -129,9 +129,7 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
   private final Setter SET_CONTENT = new ContentSetter() {
 	  @Override
 	  public void set(String content) {
-		  if (item == null) {
-			  feed.setContent(content);
-		  } else {
+		  if (item != null) {
 			  item.setContent(content);
 		  }
 	  }

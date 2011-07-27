@@ -51,6 +51,13 @@ public class RSSHandlerTest {
     handler.startElement(null, null, "description", null);
     assertTrue(handler.isBuffering());
   }
+  
+  @Test
+  public void isBufferingContent() {
+    assertFalse(handler.isBuffering());
+    handler.startElement(null, null, "content:encoded", null);
+    assertTrue(handler.isBuffering());
+  }
 
   @Test
   public void isBufferingCategory() {

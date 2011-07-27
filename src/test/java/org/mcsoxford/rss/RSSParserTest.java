@@ -81,6 +81,43 @@ public class RSSParserTest {
 
     assertFalse(items.hasNext());
   }
+  
+  @Test
+  public void parseContentTest() {
+	  stream = getClass().getClassLoader().getResourceAsStream("wordpress_feed.xml");
+	  final RSSFeed feed = parse(stream);
+
+	  final Iterator<RSSItem> items = feed.getItems().iterator();
+	  RSSItem item;
+
+	  item = items.next();
+	  
+	  assertEquals("WordPress 3.2.1", item.getTitle());
+	  assertEquals(Uri.parse("http://wordpress.org/news/2011/07/wordpress-3-2-1/"), item.getLink());
+	  assertEquals("test: we&#8217;re, <b>apple</b>", item.getDescription());	  
+	  GregorianCalendar calendar=new GregorianCalendar(2011, 6, 12, 19, 49,0);
+	  calendar.setTimeZone(TimeZone.getTimeZone("GMT+0000"));
+	  Date expectedDate=calendar.getTime();
+	  
+	  assertEquals(expectedDate, item.getPubDate());
+	  assertEquals("test: we&#8217;re, <b>apple</b>", item.getDescription());
+	  assertEquals("<b>apple</b>",item.getContent());
+	  
+	  item = items.next();
+	  
+	  assertEquals("WordPress 3.2 now available", item.getTitle());
+	  assertEquals(Uri.parse("http://wordpress.org/news/2011/07/gershwin/"), item.getLink());
+	  assertEquals("test desc: ##<b>hash</b>", item.getDescription());	  
+	  calendar=new GregorianCalendar(2011, 6, 4, 21, 7,0);
+	  calendar.setTimeZone(TimeZone.getTimeZone("GMT+0000"));
+	  expectedDate=calendar.getTime();
+	  
+	  assertEquals(expectedDate, item.getPubDate());	  
+	  assertEquals("<b>apple</b>",item.getContent());
+	  
+	  
+	  assertFalse(items.hasNext());
+  }
 
   @Test(expected = IllegalArgumentException.class)
   public void parseStreamNullArgument() throws Exception {
