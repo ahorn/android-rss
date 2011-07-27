@@ -6,6 +6,7 @@ import android.net.Uri;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.TimeZone;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +53,9 @@ public class RSSParserTest {
     assertEquals(Uri.parse("http://example.com/2010/11/07"), item.getLink());
     assertEquals("Other things happened today", item.getDescription());
     assertTrue(item.getCategories().isEmpty());
-    Date expectedDate = new GregorianCalendar(2010, 10, 07, 8, 22, 14).getTime();
+    GregorianCalendar calendar=new GregorianCalendar(2010, 10, 07, 8, 22, 14);
+    calendar.setTimeZone(TimeZone.getTimeZone("Etc/GMT"));
+    Date expectedDate=calendar.getTime();
     assertEquals(expectedDate, item.getPubDate());
 
     assertEquals(2, item.getThumbnails().size());
