@@ -44,6 +44,10 @@ public class RSSItem extends RSSBase {
     return java.util.Collections.unmodifiableList(thumbnails);
   }
   
+  /**
+   * Returns the value of the optional &lt;content:encoded&gt; tag
+   * @return string value of the tag
+   */
   String getContent() {
 		return content;
   }
