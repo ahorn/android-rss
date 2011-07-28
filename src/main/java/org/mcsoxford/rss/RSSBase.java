@@ -27,7 +27,7 @@ abstract class RSSBase {
 
   private String title;
   private android.net.Uri link;
-  private String description;
+  private String description;  
   private java.util.List<String> categories;
   private java.util.Date pubdate;
 
@@ -46,7 +46,7 @@ abstract class RSSBase {
   public String getDescription() {
     return description;
   }
-
+	  
   public android.net.Uri getLink() {
     return link;
   }

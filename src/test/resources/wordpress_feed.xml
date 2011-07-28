@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>WordPress News</title>
+	<atom:link href="http://wordpress.org/news/feed/" rel="self" type="application/rss+xml" />
+	<link>http://wordpress.org/news</link>
+	<description>WordPress News</description>
+	<lastBuildDate>Sat, 16 Jul 2011 21:32:34 +0000</lastBuildDate>
+	<language>en</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+	<generator>http://wordpress.org/?v=3.3-aortic-dissection</generator>
+		<item>
+		<title>WordPress 3.2.1</title>
+		<link>http://wordpress.org/news/2011/07/wordpress-3-2-1/</link>
+		<comments>http://wordpress.org/news/2011/07/wordpress-3-2-1/#comments</comments>
+		<pubDate>Tue, 12 Jul 2011 19:49:00 GMT</pubDate>
+		<dc:creator>Andrew Nacin</dc:creator>
+				<category><![CDATA[Releases]]></category>
+
+		<guid isPermaLink="false">http://wordpress.org/news/?p=1982</guid>
+		<description><![CDATA[test: we&#8217;re, <b>apple</b>]]></description>
+			<content:encoded><![CDATA[<b>apple</b>]]></content:encoded>
+			<wfw:commentRss>http://wordpress.org/news/2011/07/wordpress-3-2-1/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+		<item>
+		<title>WordPress 3.2 now available</title>
+		<link>http://wordpress.org/news/2011/07/gershwin/</link>
+		<comments>http://wordpress.org/news/2011/07/gershwin/#comments</comments>
+		<pubDate>Mon, 04 Jul 2011 21:07:00 +0000</pubDate>
+		<dc:creator>Matt Mullenweg</dc:creator>
+				<category><![CDATA[Releases]]></category>
+
+		<guid isPermaLink="false">http://wordpress.org/news/?p=1924</guid>
+		<description><![CDATA[test desc: ##<b>hash</b>]]></description>
+			<content:encoded><![CDATA[<b>apple</b>]]></content:encoded>
+			<wfw:commentRss>http://wordpress.org/news/2011/07/gershwin/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+
+	</channel>
+</rss>

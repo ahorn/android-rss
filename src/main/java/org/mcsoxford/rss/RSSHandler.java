@@ -74,8 +74,8 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
   }
 
   /**
-   * Closure to change fields in POJOs which store information
-   * about RSS elements which have only attributes.
+   * Closure to change fields in POJOs which store information about RSS
+   * elements which have only attributes.
    */
   private static interface AttributeSetter extends Setter {
 
@@ -116,6 +116,21 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
         feed.setDescription(description);
       } else {
         item.setDescription(description);
+      }
+    }
+  };
+
+  /**
+   * Setter for RSS &lt;content:encoded&gt; elements inside a &lt;channel&gt; or
+   * an &lt;item&gt; element. The title of the RSS feed is set only if
+   * {@link #item} is {@code null}. Otherwise, the title of the RSS
+   * {@link #item} is set.
+   */
+  private final Setter SET_CONTENT = new ContentSetter() {
+    @Override
+    public void set(String content) {
+      if (item != null) {
+        item.setContent(content);
       }
     }
   };
@@ -194,16 +209,20 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
         return;
       }
 
-      final int height = MediaAttributes.intValue(attributes, MEDIA_THUMBNAIL_HEIGHT, DEFAULT_DIMENSION);
-      final int width = MediaAttributes.intValue(attributes, MEDIA_THUMBNAIL_WIDTH, DEFAULT_DIMENSION);
-      final String url = MediaAttributes.stringValue(attributes, MEDIA_THUMBNAIL_URL);
+      final int height = MediaAttributes.intValue(attributes,
+          MEDIA_THUMBNAIL_HEIGHT, DEFAULT_DIMENSION);
+      final int width = MediaAttributes.intValue(attributes,
+          MEDIA_THUMBNAIL_WIDTH, DEFAULT_DIMENSION);
+      final String url = MediaAttributes.stringValue(attributes,
+          MEDIA_THUMBNAIL_URL);
 
       if (url == null) {
         // ignore invalid media:thumbnail elements which have no URL.
         return;
       }
 
-      item.addThumbnail(new MediaThumbnail(android.net.Uri.parse(url), height, width));
+      item.addThumbnail(new MediaThumbnail(android.net.Uri.parse(url), height,
+          width));
     }
 
   };
@@ -225,6 +244,7 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
     setters = new java.util.HashMap<String, Setter>(/* 2^3 */8);
     setters.put("title", SET_TITLE);
     setters.put("description", SET_DESCRIPTION);
+    setters.put("content:encoded", SET_CONTENT);
     setters.put("link", SET_LINK);
     setters.put("category", ADD_CATEGORY);
     setters.put("pubDate", SET_PUBDATE);
@@ -294,4 +314,3 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
   }
 
 }
-
