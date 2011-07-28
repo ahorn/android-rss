@@ -119,6 +119,19 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
       }
     }
   };
+  
+  /**
+   * Setter for an RSS &lt;content:encoded&gt; element inside an &lt;item&gt;
+   * element.
+   */
+  private final Setter SET_CONTENT = new ContentSetter() {
+    @Override
+    public void set(String content) {
+      if (item != null) {
+        item.setContent(content);
+      }
+    }
+  };
 
   /**
    * Setter for RSS &lt;link&gt; elements inside a &lt;channel&gt; or an
@@ -225,6 +238,7 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
     setters = new java.util.HashMap<String, Setter>(/* 2^3 */8);
     setters.put("title", SET_TITLE);
     setters.put("description", SET_DESCRIPTION);
+    setters.put("content:encoded", SET_CONTENT);
     setters.put("link", SET_LINK);
     setters.put("category", ADD_CATEGORY);
     setters.put("pubDate", SET_PUBDATE);

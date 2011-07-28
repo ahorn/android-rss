@@ -17,7 +17,9 @@
     <item>
       <title>News for October</title>
       <link>http://example.com/2010/10/12</link>
-      <description>October days</description>
+      <!-- Unfortunately, CDATA is often abused within description elements -->
+      <description><![CDATA[October days: we&#8217;re, <b>apple</b> ##<i>pie</i>]]></description>
+      <content:encoded><![CDATA[October days: we&#8217;re, <b>apple</b> ##<i>pie</i>]]></content:encoded>
       <category>Daily news</category>
       <category>October news</category>
     </item>

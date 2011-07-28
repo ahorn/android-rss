@@ -6,6 +6,7 @@ import android.net.Uri;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.TimeZone;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +53,9 @@ public class RSSParserTest {
     assertEquals(Uri.parse("http://example.com/2010/11/07"), item.getLink());
     assertEquals("Other things happened today", item.getDescription());
     assertTrue(item.getCategories().isEmpty());
-    Date expectedDate = new GregorianCalendar(2010, 10, 07, 8, 22, 14).getTime();
+    GregorianCalendar calendar = new GregorianCalendar(2010, 10, 07, 8, 22, 14);
+    calendar.setTimeZone(TimeZone.getTimeZone("Etc/GMT"));
+    Date expectedDate = calendar.getTime();
     assertEquals(expectedDate, item.getPubDate());
 
     assertEquals(2, item.getThumbnails().size());
@@ -70,7 +73,8 @@ public class RSSParserTest {
     item = items.next();
     assertEquals("News for October", item.getTitle());
     assertEquals(Uri.parse("http://example.com/2010/10/12"), item.getLink());
-    assertEquals("October days", item.getDescription());
+    assertEquals("October days: we&#8217;re, <b>apple</b> ##<i>pie</i>", item.getDescription());
+    assertEquals("October days: we&#8217;re, <b>apple</b> ##<i>pie</i>", item.getContent());
     assertEquals(2, item.getCategories().size());
     assertTrue(item.getCategories().contains("Daily news"));
     assertTrue(item.getCategories().contains("October news"));
