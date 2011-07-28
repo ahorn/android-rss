@@ -44,11 +44,11 @@ public class RSSItem extends RSSBase {
     return java.util.Collections.unmodifiableList(thumbnails);
   }
   
-  public String getContent() {
+  String getContent() {
 		return content;
   }
 
-  public void setContent(String content) {
+  void setContent(String content) {
 		this.content = content;
   }	  
 }
