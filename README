@@ -25,7 +25,7 @@ new property should be the relative path to the directory which you
 created when you fetched the Android RSS library source code with Git.
 
 The library is compiled by the Android build framework when you build
-your mobile app which was specified in the --path argument above.
+the mobile app which was specified in the --path argument above.
 
 If you are using Git for your mobile app, then upstream changes to the
 RSS library could be pulled in with Git's merge-subtree feature [1].
