@@ -12,7 +12,7 @@ Fetch the source code with Git:
 To reference this library project from within your Android application,
 navigate to the <sdk>/tools/ directory and use the following command:
 
-  android update lib-project \
+  android update project \
     --target <target_ID> \
     --path path/to/your/project \
     --library path/to/android-rss
