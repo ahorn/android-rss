@@ -59,11 +59,15 @@ public class RSSReader implements java.io.Closeable {
   }
 
   /**
-   * Instantiate a thread-safe HTTP client to retrieve and parse RSS feeds.
-   * Default RSS configuration capacity values are used.
+   * Instantiate a thread-safe HTTP client to retrieve RSS feeds. The injected
+   * {@link HttpClient} implementation must be thread-safe. Internal memory
+   * consumption and load performance can be tweaked with {@link RSSConfig}.
+   * 
+   * @param httpclient thread-safe HTTP client implementation
+   * @param config RSS configuration
    */
-  public RSSReader() {
-    this(new DefaultHttpClient(), new RSSParser(new RSSConfig()));
+  public RSSReader(HttpClient httpclient, RSSConfig config) {
+    this(httpclient, new RSSParser(config));
   }
 
   /**
@@ -73,6 +77,14 @@ public class RSSReader implements java.io.Closeable {
    */
   public RSSReader(RSSConfig config) {
     this(new DefaultHttpClient(), new RSSParser(config));
+  }
+
+  /**
+   * Instantiate a thread-safe HTTP client to retrieve and parse RSS feeds.
+   * Default RSS configuration capacity values are used.
+   */
+  public RSSReader() {
+    this(new DefaultHttpClient(), new RSSParser(new RSSConfig()));
   }
 
   /**
