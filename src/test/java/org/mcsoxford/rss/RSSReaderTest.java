@@ -40,7 +40,7 @@ public class RSSReaderTest {
     assertEquals("BBC News - World", feed.getTitle());
 
     assertEquals(
-        android.net.Uri.parse("http://www.bbc.co.uk/go/rss/int/news/-/news/world/"),
+        android.net.Uri.parse("http://www.bbc.co.uk/news/world/#sa-ns_mchannel=rss&ns_source=PublicRSS20-sa"),
         feed.getLink());
 
     assertEquals(
