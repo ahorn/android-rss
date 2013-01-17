@@ -132,20 +132,6 @@ public class RSSReader implements java.io.Closeable {
       Resources.closeQuietly(feedStream);
     }
   }
-  
-  /**
-   * Get the XML content from a string and parse it to construct an in-memory 
-   * representation of an RSS 2.0 feed.
-   * 
-   * @param string containing RSS 2.0 document
-   * @return in-memory representation of RSS feed
-   * @throws RSSFault if an unrecoverable parse error occurs
-   */
-  public RSSFeed loadFromString(String content) {
-    InputStream feedStream = new ByteArrayInputStream(content.getBytes());
-    RSSFeed feed = parser.parse(feedStream);
-    return feed;
-  }
 
   /**
    * Release all HTTP client resources.
