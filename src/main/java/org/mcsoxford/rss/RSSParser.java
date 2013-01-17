@@ -28,16 +28,15 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 /**
- * Internal thread-safe RSS parser SPI implementation.
+ * Thread-safe RSS parser SPI implementation.
  * 
  * @author Mr Horn
  */
-class RSSParser implements RSSParserSPI {
+public class RSSParser implements RSSParserSPI {
 
   private final RSSConfig config;
 
-  /* Internal constructor for RSSReader */
-  RSSParser(RSSConfig config) {
+  public RSSParser(RSSConfig config) {
     this.config = config;
   }
 
