@@ -47,5 +47,18 @@ final class MediaAttributes {
     return Integer.parseInt(value);
   }
 
+	/**
+	 * Returns the RSS 2.0 attribute with the specified local name as an
+	 * integer. The return value is {@code null} if no attribute with such name
+	 * exists.
+	 */
+	static Integer intValue(org.xml.sax.Attributes attributes, String name) {
+		final String value = stringValue(attributes, name);
+		if (value == null) {
+			return null;
+		}
+		return Integers.parseInteger(value);
+	}
+
 }
 

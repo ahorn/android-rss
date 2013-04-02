@@ -251,6 +251,38 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
 
   };
 
+	/**
+	 * Setter for RSS &lt;enclosure&gt; elements inside an &lt;item&gt; element.
+	 */
+	private final Setter SET_ENCLOSURE = new AttributeSetter() {
+
+		private static final String URL = "url";
+		private static final String LENGTH = "length";
+		private static final String MIMETYPE = "type";
+
+		@Override
+		public void set(org.xml.sax.Attributes attributes) {
+			if (item == null) {
+				// Ignore invalid elements which are not inside item elements.
+				return;
+			}
+
+			final String url = MediaAttributes.stringValue(attributes, URL);
+			final Integer length = MediaAttributes.intValue(attributes, LENGTH);
+			final String mimeType = MediaAttributes.stringValue(attributes,
+					MIMETYPE);
+
+			if (url == null || length == null || mimeType == null) {
+				// Ignore invalid elements.
+				return;
+			}
+
+			MediaEnclosure enclosure = new MediaEnclosure(
+					android.net.Uri.parse(url), length, mimeType);
+			item.setEnclosure(enclosure);
+		}
+	};
+
   /**
    * Use configuration to optimize initial capacities of collections
    */
@@ -275,6 +307,7 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
     setters.put("media:thumbnail", ADD_MEDIA_THUMBNAIL);
 		setters.put("lastBuildDate", SET_LAST_BUILE_DATE);
 		setters.put("ttl", SET_TTL);
+		setters.put("enclosure", SET_ENCLOSURE);
   }
 
   /**
