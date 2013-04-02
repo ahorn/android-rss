@@ -169,6 +169,21 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
     }
   };
 
+	/**
+	 * Setter for RSS &lt;lastBuildDate&gt; elements inside a &lt;channel&gt;.
+	 */
+	private final Setter SET_LAST_BUILE_DATE = new ContentSetter() {
+		@Override
+		public void set(String pubDate) {
+			final java.util.Date date = Dates.parseRfc822(pubDate);
+			if (item == null) {
+				feed.setLastBuildDate(date);
+			} else {
+				// Ignore invalid elements which are inside item elements.
+			}
+		}
+	};
+
   /**
    * Setter for one or multiple RSS &lt;category&gt; elements inside a
    * &lt;channel&gt; or an &lt;item&gt; element. The title of the RSS feed is
@@ -243,6 +258,7 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
     setters.put("category", ADD_CATEGORY);
     setters.put("pubDate", SET_PUBDATE);
     setters.put("media:thumbnail", ADD_MEDIA_THUMBNAIL);
+		setters.put("lastBuildDate", SET_LAST_BUILE_DATE);
   }
 
   /**
