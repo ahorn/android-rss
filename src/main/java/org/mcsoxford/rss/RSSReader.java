@@ -98,48 +98,52 @@ public class RSSReader implements java.io.Closeable {
    * @throws RSSFault if an unrecoverable IO error has occurred
    */
   public RSSFeed load(String uri) throws RSSReaderException {
-	  InputStream feedStream = this.connectAndGetFeed(uri); 
-	  return this.parseRSSFeed(feedStream, uri);
-  }
-
-
-  public InputStream connectAndGetFeed(String uri) throws RSSReaderException {
-	  InputStream feedStream = null; 
-	  final HttpGet httpget = new HttpGet(uri);
-	  try {
-	      // Send GET request to URI
-	      final HttpResponse response = httpclient.execute(httpget);
-
-	      // Check if server response is valid
-	      final StatusLine status = response.getStatusLine();
-	      if (status.getStatusCode() != HttpStatus.SC_OK) {
-	        throw new RSSReaderException(status.getStatusCode(),
-	            status.getReasonPhrase());
-	      }
-
-	      // Extract content stream from HTTP response
-	      HttpEntity entity = response.getEntity();
-
-	      feedStream = entity.getContent();
-	  } catch (ClientProtocolException e) {
-	      throw new RSSFault(e);
-	  } catch (IOException e) {
-	      throw new RSSFault(e);
-	  } finally {
-	      Resources.closeQuietly(feedStream);
-	  }
-	return feedStream;
+	InputStream feedStream = this.connectAndGetFeed(uri); 
+	return this.parseRSSFeed(feedStream, uri);
   }
   
-  RSSFeed parseRSSFeed(InputStream feedStream, String uri) {
-      RSSFeed feed = parser.parse(feedStream);
+  
+  protected InputStream connectAndGetFeed(String uri) throws RSSReaderException {
+	InputStream feedStream = null; 
+	final HttpGet httpget = new HttpGet(uri);
+	try {
+	  // Send GET request to URI
+	  final HttpResponse response = httpclient.execute(httpget);
 
-      if (feed.getLink() == null) {
-        feed.setLink(android.net.Uri.parse(uri));
-      }
+	  // Check if server response is valid
+	  final StatusLine status = response.getStatusLine();
+	  if (status.getStatusCode() != HttpStatus.SC_OK) {
+	    throw new RSSReaderException(status.getStatusCode(),
+	      status.getReasonPhrase());
+	  }
 
-      return feed;
+	  // Extract content stream from HTTP response
+	  HttpEntity entity = response.getEntity();
+
+      feedStream = entity.getContent();
+    } catch (ClientProtocolException e) {
+      Resources.closeQuietly(feedStream);
+      throw new RSSFault(e);
+	} catch (IOException e) {
+      Resources.closeQuietly(feedStream);
+	  throw new RSSFault(e);
+	} /*finally {
+	  //Resources.closeQuietly(feedStream);
+	}*/
+	return feedStream;
   }
+ 
+  
+  private RSSFeed parseRSSFeed(InputStream feedStream, String uri) {
+    RSSFeed feed = parser.parse(feedStream);
+
+    if (feed.getLink() == null) {
+      feed.setLink(android.net.Uri.parse(uri));
+    }
+
+    return feed;
+  }
+
 
   /**
    * Release all HTTP client resources.
