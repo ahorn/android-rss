@@ -98,9 +98,22 @@ public class RSSReader implements java.io.Closeable {
    * @throws RSSFault if an unrecoverable IO error has occurred
    */
   public RSSFeed load(String uri) throws RSSReaderException {
+    InputStream feedStream = this.connectAndGetFeed(uri); 
+    return this.parseRSSFeed(feedStream, uri);
+  }
+  
+  /**
+   * (This method is called from load method).
+   * Retreive a stream for reading the RSS feed.
+   * This method may be overloaded to create RSSreaders offline.
+   * @param uri RSS 2.0 feed URI
+   * @return Stream with RSS Feed
+   * @throws RSSReaderException if RSS feed could not be retrieved because of
+   *           HTTP error
+   */
+  protected InputStream connectAndGetFeed(String uri) throws RSSReaderException {
+    InputStream feedStream = null; 
     final HttpGet httpget = new HttpGet(uri);
-
-    InputStream feedStream = null;
     try {
       // Send GET request to URI
       final HttpResponse response = httpclient.execute(httpget);
@@ -109,28 +122,35 @@ public class RSSReader implements java.io.Closeable {
       final StatusLine status = response.getStatusLine();
       if (status.getStatusCode() != HttpStatus.SC_OK) {
         throw new RSSReaderException(status.getStatusCode(),
-            status.getReasonPhrase());
+        status.getReasonPhrase());
       }
 
       // Extract content stream from HTTP response
       HttpEntity entity = response.getEntity();
+
       feedStream = entity.getContent();
-
-      RSSFeed feed = parser.parse(feedStream);
-
-      if (feed.getLink() == null) {
-        feed.setLink(android.net.Uri.parse(uri));
-      }
-
-      return feed;
     } catch (ClientProtocolException e) {
+      Resources.closeQuietly(feedStream);
       throw new RSSFault(e);
     } catch (IOException e) {
-      throw new RSSFault(e);
-    } finally {
       Resources.closeQuietly(feedStream);
-    }
+      throw new RSSFault(e);
+    } 
+    return feedStream;
   }
+ 
+  
+  private RSSFeed parseRSSFeed(InputStream feedStream, String uri) {
+    RSSFeed feed = parser.parse(feedStream);
+
+    if (feed.getLink() == null) {
+      feed.setLink(android.net.Uri.parse(uri));
+    }
+
+    Resources.closeQuietly(feedStream);
+    return feed;
+  }
+
 
   /**
    * Release all HTTP client resources.
