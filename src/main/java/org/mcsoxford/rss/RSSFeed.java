@@ -24,6 +24,8 @@ package org.mcsoxford.rss;
 public class RSSFeed extends RSSBase {
 
   private final java.util.List<RSSItem> items;
+	private java.util.Date lastBuildDate;
+	private Integer ttl;
 
   RSSFeed() {
     super(/* initial capacity for category names */ (byte) 3);
@@ -40,6 +42,22 @@ public class RSSFeed extends RSSBase {
   void addItem(RSSItem item) {
     items.add(item);
   }
+
+	void setLastBuildDate(java.util.Date date) {
+		lastBuildDate = date;
+	}
+
+	public java.util.Date getLastBuildDate() {
+		return lastBuildDate;
+	}
+
+	void setTTL(Integer value) {
+		ttl = value;
+	}
+
+	public Integer getTTL() {
+		return ttl;
+	}
 
 }
 

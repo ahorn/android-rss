@@ -169,6 +169,36 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
     }
   };
 
+	/**
+	 * Setter for RSS &lt;lastBuildDate&gt; elements inside a &lt;channel&gt;.
+	 */
+	private final Setter SET_LAST_BUILE_DATE = new ContentSetter() {
+		@Override
+		public void set(String pubDate) {
+			final java.util.Date date = Dates.parseRfc822(pubDate);
+			if (item == null) {
+				feed.setLastBuildDate(date);
+			} else {
+				// Ignore invalid elements which are inside item elements.
+			}
+		}
+	};
+
+	/**
+	 * Setter for RSS &lt;ttl&gt; elements inside a &lt;channel&gt;.
+	 */
+	private final Setter SET_TTL = new ContentSetter() {
+		@Override
+		public void set(String ttl) {
+			final Integer value = Integers.parseInteger(ttl);
+			if (item == null) {
+				feed.setTTL(value);
+			} else {
+				// Ignore invalid elements which are inside item elements.
+			}
+		}
+	};
+
   /**
    * Setter for one or multiple RSS &lt;category&gt; elements inside a
    * &lt;channel&gt; or an &lt;item&gt; element. The title of the RSS feed is
@@ -221,6 +251,38 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
 
   };
 
+	/**
+	 * Setter for RSS &lt;enclosure&gt; elements inside an &lt;item&gt; element.
+	 */
+	private final Setter SET_ENCLOSURE = new AttributeSetter() {
+
+		private static final String URL = "url";
+		private static final String LENGTH = "length";
+		private static final String MIMETYPE = "type";
+
+		@Override
+		public void set(org.xml.sax.Attributes attributes) {
+			if (item == null) {
+				// Ignore invalid elements which are not inside item elements.
+				return;
+			}
+
+			final String url = MediaAttributes.stringValue(attributes, URL);
+			final Integer length = MediaAttributes.intValue(attributes, LENGTH);
+			final String mimeType = MediaAttributes.stringValue(attributes,
+					MIMETYPE);
+
+			if (url == null || length == null || mimeType == null) {
+				// Ignore invalid elements.
+				return;
+			}
+
+			MediaEnclosure enclosure = new MediaEnclosure(
+					android.net.Uri.parse(url), length, mimeType);
+			item.setEnclosure(enclosure);
+		}
+	};
+
   /**
    * Use configuration to optimize initial capacities of collections
    */
@@ -235,7 +297,7 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
     this.config = config;
 
     // initialize dispatchers to manage the state of the SAX handler
-    setters = new java.util.HashMap<String, Setter>(/* 2^3 */8);
+    setters = new java.util.HashMap<String, Setter>(/* 2^3 */16);
     setters.put("title", SET_TITLE);
     setters.put("description", SET_DESCRIPTION);
     setters.put("content:encoded", SET_CONTENT);
@@ -243,6 +305,9 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
     setters.put("category", ADD_CATEGORY);
     setters.put("pubDate", SET_PUBDATE);
     setters.put("media:thumbnail", ADD_MEDIA_THUMBNAIL);
+    setters.put("lastBuildDate", SET_LAST_BUILE_DATE);
+    setters.put("ttl", SET_TTL);
+    setters.put("enclosure", SET_ENCLOSURE);
   }
 
   /**
