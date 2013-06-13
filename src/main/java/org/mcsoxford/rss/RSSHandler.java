@@ -297,7 +297,7 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
     this.config = config;
 
     // initialize dispatchers to manage the state of the SAX handler
-    setters = new java.util.HashMap<String, Setter>(/* 2^3 */8);
+    setters = new java.util.HashMap<String, Setter>(/* 2^3 */16);
     setters.put("title", SET_TITLE);
     setters.put("description", SET_DESCRIPTION);
     setters.put("content:encoded", SET_CONTENT);
@@ -305,9 +305,9 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
     setters.put("category", ADD_CATEGORY);
     setters.put("pubDate", SET_PUBDATE);
     setters.put("media:thumbnail", ADD_MEDIA_THUMBNAIL);
-		setters.put("lastBuildDate", SET_LAST_BUILE_DATE);
-		setters.put("ttl", SET_TTL);
-		setters.put("enclosure", SET_ENCLOSURE);
+    setters.put("lastBuildDate", SET_LAST_BUILE_DATE);
+    setters.put("ttl", SET_TTL);
+    setters.put("enclosure", SET_ENCLOSURE);
   }
 
   /**
