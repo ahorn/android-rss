@@ -16,8 +16,8 @@
 
 package org.mcsoxford.rss;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Internal helper class for date conversions.
@@ -26,27 +26,85 @@ import java.text.SimpleDateFormat;
  */
 final class Dates {
 
-  /**
-   * @see <a href="http://www.ietf.org/rfc/rfc0822.txt">RFC 822</a>
-   */
-  private static final SimpleDateFormat RFC822 = new SimpleDateFormat(
-      "EEE, dd MMM yyyy HH:mm:ss Z", java.util.Locale.ENGLISH);
+	static private boolean isGMT = false;
+	static final String[] standardFormats = { "EEEE', 'dd-MMM-yy HH:mm:ss z", // RFC
+																				// 850
+																				// (obsoleted
+																				// by
+																				// 1036)
+			"EEEE', 'dd-MMM-yy HH:mm:ss", // ditto but no tz. Happens too often
+			"EEE', 'dd-MMM-yyyy HH:mm:ss z", // RFC 822/1123
+			"EEE', 'dd MMM yyyy HH:mm:ss z", // REMIND what rfc? Apache/1.1
+			"EEEE', 'dd MMM yyyy HH:mm:ss z", // REMIND what rfc? Apache/1.1
+			"EEE', 'dd MMM yyyy hh:mm:ss z", // REMIND what rfc? Apache/1.1
+			"EEEE', 'dd MMM yyyy hh:mm:ss z", // REMIND what rfc? Apache/1.1
+			"EEE MMM dd HH:mm:ss z yyyy", // Date's string output format
+			"EEE MMM dd HH:mm:ss yyyy", // ANSI C asctime format()
+			"EEE', 'dd-MMM-yy HH:mm:ss", // No time zone 2 digit year RFC 1123
+			"EEE', 'dd-MMM-yyyy HH:mm:ss" // No time zone RFC 822/1123
+	};
 
-  /* Hide constructor */
-  private Dates() {}
-  
-  /**
-   * Parses string as an RFC 822 date/time.
-   * 
-   * @throws RSSFault if the string is not a valid RFC 822 date/time
-   */
-  static java.util.Date parseRfc822(String date) {
-    try {
-      return RFC822.parse(date);
-    } catch (ParseException e) {
-      throw new RSSFault(e);
-    }
-  }
+	/*
+	 * because there are problems with JDK1.1.6/SimpleDateFormat with
+	 * recognizing GMT, we have to create this workaround with the following
+	 * hardcoded strings
+	 */
+	static final String[] gmtStandardFormats = { "EEEE',' dd-MMM-yy HH:mm:ss 'GMT'", // RFC
+																						// 850
+																						// (obsoleted
+																						// by
+																						// 1036)
+			"EEE',' dd-MMM-yyyy HH:mm:ss 'GMT'", // RFC 822/1123
+			"EEE',' dd MMM yyyy HH:mm:ss 'GMT'", // REMIND what rfc? Apache/1.1
+			"EEEE',' dd MMM yyyy HH:mm:ss 'GMT'", // REMIND what rfc? Apache/1.1
+			"EEE',' dd MMM yyyy hh:mm:ss 'GMT'", // REMIND what rfc? Apache/1.1
+			"EEEE',' dd MMM yyyy hh:mm:ss 'GMT'", // REMIND what rfc? Apache/1.1
+			"EEE MMM dd HH:mm:ss 'GMT' yyyy" // Date's string output format
+	};
 
+	static String dateString;
+
+	static java.util.Date parse(String date) {
+		dateString = date.trim();
+		if (dateString.indexOf("GMT") != -1) {
+			isGMT = true;
+		}
+		return getDate();
+	}
+
+	static private java.util.Date getDate() {
+
+		int arrayLen = isGMT ? gmtStandardFormats.length : standardFormats.length;
+		for (int i = 0; i < arrayLen; i++) {
+			java.util.Date d = null;
+
+			if (isGMT) {
+				d = tryParsing(gmtStandardFormats[i]);
+			} else {
+				d = tryParsing(standardFormats[i]);
+			}
+			if (d != null) {
+				return d;
+			}
+
+		}
+
+		return null;
+	}
+
+	static private java.util.Date tryParsing(String format) {
+
+		java.text.SimpleDateFormat df = new java.text.SimpleDateFormat(format, Locale.US);
+		if (isGMT) {
+			df.setTimeZone(TimeZone.getTimeZone("GMT"));
+		}
+		try {
+			return df.parse(dateString);
+		} catch (Exception e) {
+			return null;
+		}
+	}
 }
+
+
 
