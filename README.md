@@ -5,6 +5,8 @@ Description: Lightweight Android library to read parts of RSS 2.0 feeds.
 
 == Installation ==
 
+Add as a Maven/Gradle dependency: https://jitpack.io/#ahorn/android-rss
+
 Fetch the source code with Git:
 
   git clone https://ahorn@github.com/ahorn/android-rss.git
