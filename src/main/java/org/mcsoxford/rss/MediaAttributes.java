@@ -40,7 +40,7 @@ final class MediaAttributes {
    */
   static int intValue(org.xml.sax.Attributes attributes, String name, int defaultValue) {
     final String value = stringValue(attributes, name);
-    if(value == null) {
+    if((value == null) || (value.isEmpty())) {
       return defaultValue;
     }
 
@@ -54,7 +54,7 @@ final class MediaAttributes {
 	 */
 	static Integer intValue(org.xml.sax.Attributes attributes, String name) {
 		final String value = stringValue(attributes, name);
-		if (value == null) {
+		if ((value == null)|| (value.isEmpty())) {
 			return null;
 		}
 		return Integers.parseInteger(value);
