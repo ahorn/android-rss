@@ -49,6 +49,10 @@ Android library project documentation:
 Eclipse reports the error: "Default target help does not exist in this project"
   https://github.com/ahorn/android-rss/issues/2
 
+This library uses the [HttpURLConnection class](https://developer.android.com/reference/java/net/HttpURLConnection.html), which should work for all versions of Android including
+ upcoming versions. (At least up to API 25.)
+
+
 # API Usage
 ```
   RSSReader reader = new RSSReader();

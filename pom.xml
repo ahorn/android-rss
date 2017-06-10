@@ -51,14 +51,6 @@
     </plugins>
   </build>
   <dependencies>
-    <!-- Compile Dependencies -->
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>4.2.2</version>
-      <scope>compile</scope>
-    </dependency>
-
     <!-- Provided Dependencies -->
     <dependency>
       <groupId>com.google.android</groupId>
