@@ -160,7 +160,7 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
   private final Setter SET_PUBDATE = new ContentSetter() {
     @Override
     public void set(String pubDate) {
-      final java.util.Date date = Dates.parseRfc822(pubDate);
+			final java.util.Date date = Dates.parse(pubDate);
       if (item == null) {
         feed.setPubDate(date);
       } else {
@@ -175,7 +175,7 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
 	private final Setter SET_LAST_BUILE_DATE = new ContentSetter() {
 		@Override
 		public void set(String pubDate) {
-			final java.util.Date date = Dates.parseRfc822(pubDate);
+			final java.util.Date date = Dates.parse(pubDate);
 			if (item == null) {
 				feed.setLastBuildDate(date);
 			} else {
