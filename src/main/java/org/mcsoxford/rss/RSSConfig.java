@@ -16,11 +16,15 @@
 
 package org.mcsoxford.rss;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Immutable data structure to configure the RSS parser and loader modules. On
  * large data sets, well-chosen configuration values can reduce memory
  * consumption and increase performance.
- * 
+ *
  * @author Mr Horn
  */
 public final class RSSConfig {
@@ -37,17 +41,20 @@ public final class RSSConfig {
    */
   final byte thumbnailAvg;
 
+  final List<DateParser> dateParsers;
+
   /**
    * Instantiate an RSS configuration with the specified parameters.
-   * 
+   *
    * @param categoryAvg average number of RSS item &lt;category&gt; elements in
    *          a typical RSS feed
    * @param thumbnailAvg average number of RSS item &lt;metia:thumbnail&gt;
    *          elements in a typical RSS feed
    */
-  public RSSConfig(byte categoryAvg, byte thumbnailAvg) {
+  public RSSConfig(byte categoryAvg, byte thumbnailAvg, List<DateParser> dateParsers) {
     this.categoryAvg = categoryAvg;
     this.thumbnailAvg = thumbnailAvg;
+    this.dateParsers = Collections.unmodifiableList(new ArrayList<DateParser>(dateParsers));
   }
 
   /**
@@ -56,6 +63,7 @@ public final class RSSConfig {
   public RSSConfig() {
     this.categoryAvg = 3;
     this.thumbnailAvg = 2;
+    this.dateParsers = Collections.unmodifiableList(Collections.<DateParser>singletonList(new Rfc822DateParser()));
   }
 
 }
