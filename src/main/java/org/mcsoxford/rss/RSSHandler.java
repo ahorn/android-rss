@@ -16,6 +16,8 @@
 
 package org.mcsoxford.rss;
 
+import java.util.Date;
+
 /**
  * Internal SAX handler to efficiently parse RSS feeds. Only a single thread
  * must use this SAX handler.
@@ -160,7 +162,7 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
   private final Setter SET_PUBDATE = new ContentSetter() {
     @Override
     public void set(String pubDate) {
-      final java.util.Date date = Dates.parseRfc822(pubDate);
+      final java.util.Date date = parseDate(pubDate);
       if (item == null) {
         feed.setPubDate(date);
       } else {
@@ -175,7 +177,7 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
 	private final Setter SET_LAST_BUILE_DATE = new ContentSetter() {
 		@Override
 		public void set(String pubDate) {
-			final java.util.Date date = Dates.parseRfc822(pubDate);
+			final java.util.Date date = parseDate(pubDate);
 			if (item == null) {
 				feed.setLastBuildDate(date);
 			} else {
@@ -282,6 +284,16 @@ class RSSHandler extends org.xml.sax.helpers.DefaultHandler {
 			item.setEnclosure(enclosure);
 		}
 	};
+
+	private Date parseDate(String date) {
+	    for (DateParser parser : config.dateParsers) {
+	        Date result = parser.parse(date);
+	        if (result != null) {
+	            return result;
+            }
+        }
+        throw new RSSFault("No parsers able to handle date " + date);
+    }
 
   /**
    * Use configuration to optimize initial capacities of collections
