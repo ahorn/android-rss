@@ -41,6 +41,10 @@ public final class RSSConfig {
    */
   final byte thumbnailAvg;
 
+  /**
+   * List of DataParser implementations which will be queried in-order to deserialize
+   * date strings.
+   */
   final List<DateParser> dateParsers;
 
   /**
@@ -50,6 +54,7 @@ public final class RSSConfig {
    *          a typical RSS feed
    * @param thumbnailAvg average number of RSS item &lt;metia:thumbnail&gt;
    *          elements in a typical RSS feed
+   * @param dateParsers DateParser implementations for parsing dates found in RSS feed
    */
   public RSSConfig(byte categoryAvg, byte thumbnailAvg, List<DateParser> dateParsers) {
     this.categoryAvg = categoryAvg;

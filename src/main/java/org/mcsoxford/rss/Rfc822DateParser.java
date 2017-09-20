@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Internal helper class for date conversions.
+ * Canonical DateParser implementation for RSS spec. Checks against RFC-822.
  * 
  * @author Mr Horn
  */
