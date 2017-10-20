@@ -30,8 +30,17 @@ final class Rfc822DateParser implements DateParser {
   /**
    * @see <a href="http://www.ietf.org/rfc/rfc0822.txt">RFC 822</a>
    */
-  private static final SimpleDateFormat RFC822 = new SimpleDateFormat(
-      "EEE, dd MMM yyyy HH:mm:ss Z", java.util.Locale.ENGLISH);
+
+  private static final String RFC822Format = "EEE, dd MMM yyyy HH:mm:ss Z";
+
+  //use ThreadLocal for thread safety: https://stackoverflow.com/questions/6840803/why-is-javas-simpledateformat-not-thread-safe
+  private static final ThreadLocal<SimpleDateFormat> RFC822 = new ThreadLocal<SimpleDateFormat>(){
+    @Override
+    protected SimpleDateFormat initialValue()
+    {
+      return new SimpleDateFormat(RFC822Format, java.util.Locale.ENGLISH);
+    }
+  };
 
   public Rfc822DateParser() {}
   
@@ -40,7 +49,7 @@ final class Rfc822DateParser implements DateParser {
    */
   static java.util.Date parseRfc822(String date) {
     try {
-      return RFC822.parse(date);
+      return RFC822.get().parse(date);
     } catch (ParseException e) {
       return null;
     }
